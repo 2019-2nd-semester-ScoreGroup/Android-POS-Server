@@ -7,23 +7,14 @@ public class Stock {
     String key, name;
     int price;
 
-    public static Stock BuildStock(ResultSet set) {
-
-        try {
-            Stock ret = new Stock();
-            set.first();
-            ret.key = set.getString(1);
-            ret.name = set.getString(2);
-            ret.price = set.getInt(3);
-            return ret;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Stock(String key, String name, int price) {
+        this.key = key;
+        this.name = name;
+        this.price = price;
     }
 
     @Override
     public String toString() {
-        return String.format("%s_%s : %d won", key, name, price);
+        return String.format("(%s) %s : %d won", key, name, price);
     }
 }

@@ -4,6 +4,7 @@ import Data.Stock;
 import Database.DBManager;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ServerController {
     public static void main(String args[]){
@@ -11,8 +12,13 @@ public class ServerController {
         DBManager dbManager=new DBManager();
         dbManager.editStock("12345","개밥",1500);
         ResultSet set=dbManager.getStock("12345");
-        System.out.println(Stock.BuildStock(set));
-
+        try {
+            set.first();
+            Stock ret = new Stock(set.getString(1),set.getString(2),set.getInt(3));
+            System.out.println(ret);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
