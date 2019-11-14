@@ -1,16 +1,18 @@
 package Manager;
 
+import Data.*;
 import Data.Stock;
 import Database.DBManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ServerController {
     public static void main(String args[]){
-        System.out.println("Hello");
+
         DBManager dbManager=new DBManager();
-        dbManager.editStock("12345","개밥",1500);
+        dbManager.editStock(new Stock("12345","개밥",1500));
         ResultSet set=dbManager.getStock("12345");
         try {
             set.first();
@@ -19,7 +21,6 @@ public class ServerController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
 }

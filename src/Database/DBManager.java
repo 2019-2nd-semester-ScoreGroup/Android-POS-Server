@@ -1,5 +1,9 @@
 package Database;
 
+import Data.Change;
+import Data.Event;
+import Data.Stock;
+
 import java.sql.*;
 import java.sql.ResultSet;
 
@@ -21,9 +25,8 @@ public class DBManager {
         password = PW; // MySQL 서버 비밀번호
         initialize();
     }
-
-    public ResultSet editStock(String key, String name, int price) {
-        String msg = String.format("INSERT INTO stock VALUES ('%s', '%s', %d) ON DUPLICATE KEY UPDATE sname='%s',sprice=%d;", key, name, price,name,price);
+    public ResultSet editStock(Stock stock){
+        String msg = String.format("INSERT INTO stock VALUES ('%s', '%s', %d) ON DUPLICATE KEY UPDATE sname='%s',sprice=%d;", stock.getKey(), stock.getName(), stock.getPrice(),stock.getName(),stock.getPrice());
         return executeQuery(msg);
     }
 
@@ -31,6 +34,18 @@ public class DBManager {
         return executeQuery("SELECT * FROM stock");
     }
 
+    public ResultSet addEvent(Event event){
+        String msg = String.format("INSERT INTO event (etype,etime,estatus,ememo) VALUES (%d, '%s', %d,%s);", event.getKey(), event.getTime().toString(), event.getStatus(),event.getMemo());
+        for(Change c : event.getData()){
+
+        }
+
+        return executeQuery(msg);
+    }
+    private ResultSet addChange(Change change){
+        String msg = String.format("INSERT INTO event (cevent,cstock,cnumber) VALUES (%d,'%s',%d",change.getEventKey(),change.getStockKey(),change.getAmount());
+        return executeQuery(msg);
+    }
 
     private ResultSet executeQuery(String query){
         Connection con = null;
