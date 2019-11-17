@@ -1,22 +1,21 @@
 package Data;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class Event {
+    public static byte STATUS_NORMAL = 0, STATUS_CANCELED = 1, TYPE_SELL = 1, TYPE_DELIVERY = 2;
     private long key;
     private byte type, status;
-    private Time time;
+    private Timestamp time;
     private ArrayList<Change> data;
     private String memo;
 
-    public Event(long key, byte type, byte status, Time time, ArrayList<Change> data, String memo) {
-        this.key = key;
+    public Event(byte type, Timestamp time, String memo) {
         this.type = type;
-        this.status = status;
         this.time = time;
-        this.data = data;
         this.memo = memo;
+        data = new ArrayList<>();
     }
 
     private String byteToType(byte type) {
@@ -43,7 +42,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return String.format("(%d) %s - %s %s (%s)", key,byteToType(type),time.toString(),memo,byteToStatus(status) );
+        return String.format("(%d) %s - %s %s (%s)", key, byteToType(type), time.toString(), memo, byteToStatus(status));
     }
 
     public long getKey() {
@@ -70,11 +69,11 @@ public class Event {
         this.status = status;
     }
 
-    public Time getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(Time time) {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 

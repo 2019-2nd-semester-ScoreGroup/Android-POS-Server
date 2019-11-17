@@ -5,11 +5,9 @@ public class Change {
      int amount;
      long key,eventKey;
 
-    public Change(long key, String stockKey, int amount, long eventKey) {
-        this.key = key;
+    public Change(String stockKey, int amount) {
         this.stockKey = stockKey;
         this.amount = amount;
-        this.eventKey = eventKey;
     }
 
     @Override
