@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class Event {
-    public static byte STATUS_NORMAL = 0, STATUS_CANCELED = 1, TYPE_SELL = 1, TYPE_DELIVERY = 2;
+
     private long key;
     private byte type, status;
     private Timestamp time;
@@ -32,7 +32,7 @@ public class Event {
     private String byteToStatus(byte stat) {
         switch (stat) {
             case 0:
-                return "";
+                return "Normal";
             case 1:
                 return "Canceled";
             default:
@@ -43,6 +43,7 @@ public class Event {
     @Override
     public String toString() {
         return String.format("(%d) %s - %s %s (%s)", key, byteToType(type), time.toString(), memo, byteToStatus(status));
+
     }
 
     public long getKey() {

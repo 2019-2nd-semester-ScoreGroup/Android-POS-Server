@@ -1,17 +1,12 @@
 package Manager;
 
-import Data.Change;
-import Data.Event;
+import Data.EventList;
 import Data.Stock;
 import Database.DBManager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Random;
 
-public class ServerController {
+public class MainForDB {
     public static void main(String args[]){
         Random rand=new Random();
         DBManager dbManager=new DBManager();
@@ -35,18 +30,10 @@ public class ServerController {
         dbManager.addEvent(event);
         */
         //dbManager.setNoisy(true);
-         ResultSet set=dbManager.getStocks();
-         try{
-             set.first();
-             do{
-                 System.out.println(String.format("%s : %d",set.getString(1),set.getInt(2)));
-             }
-             while(set.next());
-         }catch(SQLException e){
-             e.printStackTrace();
-         }
-
-
+        System.out.println(dbManager.getEvent(2));
+        for(EventList t :dbManager.getEventList(DBManager.TYPE_SELL)){
+            System.out.println(t.toString());
+        }
 
     }
 

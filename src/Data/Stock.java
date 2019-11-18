@@ -33,6 +33,16 @@ public class Stock {
     String name;
     int price;
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    int amount;
+
     public Stock(String key, String name, int price) {
         this.key = key;
         this.name = name;
@@ -41,6 +51,6 @@ public class Stock {
 
     @Override
     public String toString() {
-        return String.format("(%s) %s : %d won", key, name, price);
+        return String.format("(%s) %s : %d 원 / %d 개", key, name, price,amount);
     }
 }

@@ -2,12 +2,14 @@ package Database;
 
 import Data.Change;
 import Data.Event;
+import Data.EventList;
 import Data.Stock;
 
 import java.sql.*;
-import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class DBManager {
+    public static byte STATUS_NORMAL = 0, STATUS_CANCELED = 1, TYPE_SELL = 1, TYPE_DELIVERY = 2;
     public boolean isNoisy() {
         return noisy;
     }
@@ -83,23 +85,7 @@ public class DBManager {
         tevent.setKey(retKey);
         return retKey;
     }
-
-    public ResultSet cancelSetEvent(Event tevent) {
-        return cancelSetEvent(tevent.getKey(), tevent.getStatus());
-    }
-
-    private ResultSet cancelSetEvent(long key, byte status) {
-        Connection con = getConnection();
-        Statement stat = getStatement(con);
-        String msg = String.format("update tevent set estatus=1 where ekey='%d';", key);
-        ResultSet ret = executeQuery(msg, stat);
-        commit(con);
-        close(stat);
-        close(con);
-        return ret;
-
-    }
-
+    
     private long addChange(Change tchange, Statement stat) {
         String msg = String.format("INSERT INTO tchange (cevent,cstock,cnumber) VALUES (%d,'%s',%d);", tchange.getEventKey(), tchange.getStockKey(), tchange.getAmount());
         executeQuery(msg, stat);
@@ -121,16 +107,16 @@ public class DBManager {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.err.println(" !! <JDBC 오류> Driver load 오류: " + e.getMessage());
+           log(" !! <JDBC 오류> Driver load 오류: " + e.getMessage());
             e.printStackTrace();
         }
 
         // 2.연결
         try {
             con = DriverManager.getConnection("jdbc:mysql://" + server + "/" + database + "?useSSL=false", user_name, password);
-            if(noisy)System.out.println("Connected");
+            log("Connected");
         } catch (SQLException e) {
-            System.err.println("con 오류:" + e.getMessage());
+            log("con 오류:" + e.getMessage());
             e.printStackTrace();
         }
         return con;
@@ -148,7 +134,7 @@ public class DBManager {
     private ResultSet executeQuery(String query, Statement stat) {
 
         try {
-            if(noisy)System.out.println(String.format("executing : %s", query));
+            log(String.format("executing : %s", query));
             ResultSet ret = stat.executeQuery(query);
             return ret;
         } catch (SQLException e) {
@@ -196,20 +182,94 @@ public class DBManager {
 
     }
 
-    public ResultSet getStocks(){
+    public Stock[] getStocks(){
         Connection con = getConnection();
         Statement stat = getStatement(con);
-        String msg="SELECT sname,SUM(cnumber) FROM tchange JOIN tstock ON tchange.cstock=tstock.skey GROUP BY skey;";
-        if(noisy)System.out.println(msg);
+        String msg="SELECT skey,sname,sprice,SUM(cnumber) AS samount FROM tchange JOIN tstock ON tchange.cstock=tstock.skey GROUP BY skey;";
+        Stock[] result=null;
+        log(msg);
         ResultSet ret=null;
         try {
             ret=stat.executeQuery(msg);
+
+        commit(con);
+        close(stat);
+        close(con);
+        ret.last();
+        result=new Stock[ret.getRow()];
+        ret.first();
+        int index=0;
+        do{
+            result[index]=new Stock(ret.getString("skey"),ret.getString("sname"),ret.getInt("sprice"));
+            result[index].setAmount(ret.getInt("samount"));
+            index++;
+        }while(ret.next());
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public Event getEvent(long key){
+        Connection con = getConnection();
+        Statement stat = getStatement(con);
+        ResultSet ret=null;
+        Event result=null;
+        String msg="SELECT * FROM (tevent JOIN tchange ON tchange.cevent=tevent.ekey) WHERE tevent.ekey=%d;";
+        try{
+            ret=stat.executeQuery(String.format(msg,key));
+            ret.first();
+            result=new Event(ret.getByte("etype"),ret.getTimestamp("etime"),ret.getString("ememo"));
+            result.setData(new ArrayList<Change>());
+            ArrayList<Change> data=result.getData();
+            do{
+                Change t=new Change(ret.getString("cstock"),ret.getInt("cnumber"));
+                t.setEventKey(ret.getLong("cevent"));
+                t.setKey(ret.getLong("ckey"));
+                data.add(t);
+            }
+            while(ret.next());
+            log(msg);
+        }catch(SQLException e){
             e.printStackTrace();
         }
         commit(con);
         close(stat);
         close(con);
-        return ret;
+        return result;
+    }
+    public boolean tryCancelEvent(String key){
+        return false;
+    }
+    public EventList[] getEventList(byte type){
+        Connection con = getConnection();
+        Statement stat = getStatement(con);
+        ResultSet ret=null;
+        EventList[] result=null;
+        String msg="SELECT ekey,etime, SUM(sprice*cnumber) as total FROM (tevent JOIN (tchange JOIN tstock ON tchange.cstock=tstock.skey) ON tchange.cevent=tevent.ekey)WHERE etype=%d GROUP BY eKey;";
+        try{
+            ret=stat.executeQuery(String.format(msg,type));
+            ret.last();
+            result=new EventList[ret.getRow()];
+            ret.first();
+            int index=0;
+            do{
+                EventList t=new EventList();
+                t.setKey(ret.getLong("ekey"));
+                t.setTime(ret.getTimestamp("etime"));
+                t.setTotalPrice(ret.getInt("total"));
+                result[index]=t;
+                index++;
+            }while(ret.next());
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        commit(con);
+        close(stat);
+        close(con);
+        return result;
+    }
+    private void log(String msg){
+        if(noisy)System.out.println(msg);
     }
 }
