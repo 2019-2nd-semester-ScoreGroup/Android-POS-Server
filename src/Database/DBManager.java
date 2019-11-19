@@ -27,11 +27,11 @@ public class DBManager {
         this.noisy = noisy;
     }
 
-    boolean noisy = false;
-    String server = "localhost"; // MySQL 서버 주소
-    String database = "AndroidPOS"; // MySQL DATABASE 이름
-    String user_name = "root"; //  MySQL 서버 아이디
-    String password = "root"; // MySQL 서버 비밀번호
+    private boolean noisy = false;
+    private String server = "localhost"; // MySQL 서버 주소
+    private String database = "AndroidPOS"; // MySQL DATABASE 이름
+    private String user_name = "root"; //  MySQL 서버 아이디
+    private String password = "root"; // MySQL 서버 비밀번호
     ConnectionBuilder builder;
 
     public DBManager() {
@@ -196,9 +196,9 @@ public class DBManager {
     }
 
     /**
-     * 이벤트 요청
+     * 거래기록 요청
      * @param key 키값
-     * @return 이벤트
+     * @return 거래기록
      */
     public Event getEvent(long key) {
         Connection con = getConnection();
@@ -288,6 +288,43 @@ public class DBManager {
         close(con);
         return result;
     }
+
+    /**
+     * 매출 요청
+     * @param start 시작날짜
+     * @param end 끝날짜
+     * @return 물건당 판매 갯수가 들어있는 리스트
+     */
+    public Stock[] getSelling(Timestamp start,Timestamp end){
+        Connection con=getConnection();
+        Statement stat=getStatement(con);
+        Stock[] result=null;
+        String msg=String.format("SELECT skey,sname, SUM(cnumber) as totNum,sprice \n" +
+            "FROM ((tevent JOIN tchange ON tevent.ekey=tchange.cevent)JOIN tstock ON tchange.cstock=tstock.skey) \n" +
+            "WHERE tevent.etime BETWEEN TIMESTAMP('%s') AND  TIMESTAMP('%s')\n" +
+            "GROUP BY skey;",start.toString(),end.toString());
+        try {
+            ResultSet ret=stat.executeQuery(msg);
+            log(msg);
+            ret.last();
+            result=new Stock[ret.getRow()];
+            ret.first();
+            int index=0;
+            do{
+                Stock t=new Stock(ret.getString("skey"),ret.getString("sname"),ret.getInt("sprice"));
+                t.setAmount(ret.getInt("totNum"));
+                result[index]=t;
+                index++;
+            }while(ret.next());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        close(stat);
+        close(con);
+        return result;
+    }
+
+    //private methods
 
     /**
      * Noisy여부에 따른 로그 출력
@@ -392,4 +429,5 @@ public class DBManager {
         close(con);
 
     }
+
 }

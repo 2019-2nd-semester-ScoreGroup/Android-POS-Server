@@ -4,6 +4,8 @@ import Data.EventList;
 import Data.Stock;
 import Database.DBManager;
 
+import java.sql.Timestamp;
+
 import java.util.Random;
 
 public class MainForDB {
@@ -34,7 +36,11 @@ public class MainForDB {
         for(EventList t :dbManager.getEventList(DBManager.TYPE_SELL)){
             System.out.println(t.toString());
         }
-
+        System.out.println();
+        System.out.println("2019-11-15 11:27:30 ~ 2019-12-15 11:27:30 거래기록");
+        for(Stock t : dbManager.getSelling(Timestamp.valueOf("2019-11-15 11:27:30"),Timestamp.valueOf("2019-12-15 11:27:30"))){
+            System.out.println(t.toString());
+        }
     }
 
 }
