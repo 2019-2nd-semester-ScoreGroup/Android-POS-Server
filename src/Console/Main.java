@@ -12,7 +12,7 @@ public class Main {
         String to;
 
         to = scanner.next();
-        if (to == "1"){
+        if (to.equals("1")){
             while(true){
                 System.out.println("코드 입력 or stop");
                 String input=scanner.nextLine();
@@ -25,11 +25,11 @@ public class Main {
             }
 
         }
-        else if (to == "2"){
+        else if (to.equals("2")){
 
 
         }
-        else if (to =="3"){
+        else if (to.equals("3")){
 
         }
         else{
