@@ -3,91 +3,112 @@ package Manager;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class NetworkManager {
-    // 연결할 포트를 지정
     private static final int PORT = 8080;
-    // 스레드 풀의 최대 스레드 개수를 지정
-    private static final int THREAD_CNT = 5;
-    private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_CNT);
-    public static void main(String[] args) {
+    private ServerController serverController;
 
-        try {
-            // 서버소켓 생성
+    NetworkManager(ServerController serverController)
+    {
+        this.serverController = serverController;
+        Run();
+    }
+
+    public void Run() {
+        try
+        {
             ServerSocket serverSocket = new ServerSocket(PORT);
 
-            // 소켓서버가 종료될때까지 무한루프
-            while(true){
-                // 소켓 접속 요청이 올때까지 대기
+            while(true)
+            {
                 Socket socket = serverSocket.accept();
-                try{
-                    /*
-                    요청이 오면 스레드 풀의 스레드로 소켓을 넣음
-                    submit : 예외발생시 재사용
-                    execut : 예외발생시 종료
-                    이후는 스레드 내에서 처리
-                    */
-
-                    threadPool.submit(new ConnectionWrap(socket));
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
+                new Thread(()->{
+                    ConnectionWrap connectionSocket = new ConnectionWrap(socket, serverController);
+                }).start();
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
-            threadPool.shutdown();
         }
     }
 }
 
-// 소켓 처리용 래퍼 클래스
 class ConnectionWrap implements Runnable{
 
     private Socket socket = null;
-    BufferedReader inputBuffer;
-    BufferedWriter outputBuffer;
+    private ServerController serverController;
+    private String msg = null;
+    private BufferedReader inputBuffer;
+    private PrintWriter printWriter;
 
-    public ConnectionWrap(Socket socket) {
+    public ConnectionWrap(Socket socket, ServerController serverController)
+    {
+        this.serverController = serverController;
         this.socket = socket;
+        run();
     }
 
     @Override
     public void run() {
 
-        try {
-            inputBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputBuffer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        } catch (IOException e) {
+        System.out.println(Thread.currentThread().getName() + " thread accpet");
+
+        try
+        {
+            getIOstream();
+
+            onReceive();
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
-        } finally {
             try {
-                socket.close(); // 반드시 종료합니다.
-            } catch (IOException e) {
-                e.printStackTrace();
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
 
-        while(true)
-        {
-            Onreceive();
-        }
+        /* 시험용
+        if(msg.equals("hello"))
+            reply("world!");
+         */
+
+        System.out.println(Thread.currentThread().getName() + " thread end");
     }
 
-    public void Onreceive()
+    private void getIOstream() throws IOException
     {
-        try {
-            String msg = inputBuffer.readLine();
+        inputBuffer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
+    }
 
-            /*
-            ParseAndExcuteData();
+    public void onReceive() throws IOException
+    {
+        getMsg();
 
-            output
-             */
+        reqeustParse();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        reply();
+    }
+
+    private void getMsg() throws IOException
+    {
+        msg = inputBuffer.readLine();
+
+        System.out.println(msg);
+
+    }
+
+    private void reqeustParse()
+    {
+        msg = serverController.parseAndExecuteData(msg);
+    }
+
+    private void reply()
+    {
+        printWriter.println(msg);
+        printWriter.flush();
     }
 }
