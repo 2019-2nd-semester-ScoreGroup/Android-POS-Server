@@ -12,10 +12,11 @@ public class initClass {
     public String modType;
     public String startDate;
     public String endDate;
+    public String date;
 
     // 생성자입니다.
     public initClass() {
-        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제하기 \n 2 = 납품하기 \n 3 = 결제 내역 확인");
+        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제,납품 \n 2 = 결제기록 \n 3 = 통계");
     }
 
     public void init(String modType) {
@@ -46,10 +47,11 @@ public class initClass {
                         System.out.println("삼품명" + tmpArr[0]);
                         System.out.println("상품코드" + tmpArr[1]);
                         System.out.println("가격" + tmpArr[2]);
+                        System.out.println("개수"+ tmpArr[3]);
                     }
 
                 } else {
-                    System.out.println("결제완료^ㅡ^!! \n -메인화면으로 가시려면 \"home\"을 입력해주세요!1");
+                    System.out.println("결제완료^ㅡ^!! \n -메인화면으로 가시려면 \"home\"을 입력해주세요!1"); //결제기록 db로 보내기
                     page = 0;
                 }
             }
@@ -59,8 +61,12 @@ public class initClass {
                 System.out.println("날짜를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                System.out.println("pong2"); //결제기록 보여줘라 날짜 순서대로 index부여해서 클래스 만들어야할듯
-                page--; // if 하나 더만들어서 인덱스 입력하면 해당 결제기록 보여주기
+                if (date == null){
+                    date = scannerValue;
+                    page++;
+                }
+                System.out.println(date); //db에서 결제기록 받고 시간 순서대로 index부여해서 보여주기
+                page--; //인덱스 입력면 해당 결제기록 보여주기
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
@@ -72,7 +78,7 @@ public class initClass {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    System.out.println(startDate+" "+endDate);
+                    System.out.println(startDate+" "+endDate); // startDate endDate 날짜 사이의 통계 보여주기
                 }
             }else if (page == 2){
 
