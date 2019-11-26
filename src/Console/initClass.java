@@ -57,16 +57,28 @@ public class initClass {
                 System.out.println("날짜를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                if (date == null){
+                if (date == null) {
                     date = scannerValue;
                     page++;
                 }
                 System.out.println(date + "목록입니다");
-                //더미 목록 보여주기
-                // 더미목록에서 index 입력하면
-                // 해당 화면
-                // 취소
-                page--; //인덱스 입력면 해당 결제기록 보여주기
+
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(i + " " + date);
+                }
+                page++;
+
+            } else if (page == 2) {
+                System.out.println("인덱스 입력");
+                //
+                page++;
+            } else if (page == 3) {
+                System.out.println("결제목록 detail");
+                page++; //취소시 page++
+
+            } else if (page == 4) {
+                System.out.println("결제기록이 취소되었습니다.");
+
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
@@ -77,14 +89,18 @@ public class initClass {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    System.out.println(startDate+" "+endDate);
+                    System.out.println(startDate + " " + endDate);
                     //startDate endDate 날짜 사이의 더미데이터 보여주기
+                    for (int i = 0; i < 5; i++) {
+                        System.out.println();
 
                     }
-                }
-            }else if (page == 2){
 
+                }
             }
+        } else if (page == 2) {
+
+        }
 
         return null;
     }
