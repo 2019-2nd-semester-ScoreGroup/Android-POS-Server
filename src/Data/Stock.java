@@ -51,6 +51,6 @@ public class Stock {
 
     @Override
     public String toString() {
-        return String.format("(%s) %s : %d 원 / %d 개", key, name, price, amount);
+        return String.format("%s %s %d %d", key, name, price, amount);
     }
 }

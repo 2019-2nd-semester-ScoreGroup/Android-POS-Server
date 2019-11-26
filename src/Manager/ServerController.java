@@ -5,7 +5,6 @@ import Data.EventList;
 import Data.Stock;
 import Database.DBManager;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,7 +82,7 @@ public class ServerController {
             for(int i = 0; i < stocks.length; i++)
             {
                 ackMsg.concat(stocks[i].toString());
-                ackMsg.concat(",");
+                ackMsg.concat(", ");
             }
             return ackMsg;
         }
@@ -140,7 +139,15 @@ public class ServerController {
             }catch(Exception e){
                 e.printStackTrace();
             }
-            return dbManager.getSelling(startTimeStamp, endTimeStamp).toString();
+            Stock[] statistickList = dbManager.getSelling(startTimeStamp, endTimeStamp);
+
+            String ackMsg = null;
+            for(int i = 0; i < statistickList.length; i++)
+            {
+                ackMsg.concat(statistickList[i].toString());
+                ackMsg.concat(", ");
+            }
+            return ackMsg;
         }
         else if(stringTokenizer.nextToken().equals("addEvent"))
         {
