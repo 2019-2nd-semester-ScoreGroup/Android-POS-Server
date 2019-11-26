@@ -7,6 +7,7 @@ import Database.DBManager;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -22,7 +23,7 @@ public class ServerController {
             networkManager = new NetworkManager(this);
         }).start();
 
-        dbManager = new DBManager();
+        dbManager = new DBManager("localhost", "androidpos", "root", "15937456");
     }
 
     public static void main(String[] args) {
@@ -48,12 +49,10 @@ public class ServerController {
     public String parseAndExecuteData(String networkMsg)
     {
         StringTokenizer stringTokenizer;
-        stringTokenizer = new StringTokenizer(networkMsg, " ");
+        stringTokenizer = new StringTokenizer(networkMsg, ",");
+        String opcode = stringTokenizer.nextToken();
 
-        if(!stringTokenizer.hasMoreTokens())
-            return "io error";
-
-        if(stringTokenizer.nextToken().equals("editStock"))
+        if(opcode.equals("editStock"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input key";
@@ -69,31 +68,30 @@ public class ServerController {
 
             return Boolean.toString(dbManager.editStock(new Stock(key, name, price)));
         }
-        else if(stringTokenizer.nextToken().equals("getStock"))
+        else if(opcode.equals("getStock"))
         {
             String key = stringTokenizer.nextToken();
 
             return dbManager.getStock(key).toString();
         }
-        else if(stringTokenizer.nextToken().equals("getStocks"))
+        else if(opcode.equals("getStocks"))
         {
-            String ackMsg = null;
+            String ackMsg = "";
             Stock []stocks = dbManager.getStocks();
             for(int i = 0; i < stocks.length; i++)
             {
-                ackMsg.concat(stocks[i].toString());
-                ackMsg.concat(", ");
+                ackMsg = ackMsg + stocks[i].toString() + ",";
             }
             return ackMsg;
         }
-        else if(stringTokenizer.nextToken().equals("getEvent"))
+        else if(opcode.equals("getEvent"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input key";
             Long key = toLong(stringTokenizer.nextToken());
             return dbManager.getEvent(key).toString();
         }
-        else if(stringTokenizer.nextToken().equals("tryChangeEvent"))
+        else if(opcode.equals("tryChangeEvent"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input key";
@@ -104,7 +102,7 @@ public class ServerController {
 
             return Boolean.toString(dbManager.tryChangeEvent(key, status));
         }
-        else if(stringTokenizer.nextToken().equals("getEventList"))
+        else if(opcode.equals("getEventList"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "type";
@@ -118,7 +116,7 @@ public class ServerController {
             }
             return ackMsg;
         }
-        else if(stringTokenizer.nextToken().equals("getSelling"))
+        else if(opcode.equals("getSelling"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input start time";
@@ -131,7 +129,7 @@ public class ServerController {
             Timestamp endTimeStamp = null;
 
             try{
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 Date parsedDate = dateFormat.parse(startTime);
                 startTimeStamp = new java.sql.Timestamp(parsedDate.getTime());
                 parsedDate = dateFormat.parse(endTime);
@@ -149,7 +147,7 @@ public class ServerController {
             }
             return ackMsg;
         }
-        else if(stringTokenizer.nextToken().equals("addEvent"))
+        else if(opcode.equals("addEvent"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input type";
