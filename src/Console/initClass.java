@@ -33,29 +33,25 @@ public class initClass {
 
     public String act(String scannerValue) {
         if ("1".equals(modType)) {
-
             if (page == 0) {
                 System.out.println("상품정보를 입력해주세요~^^");
                 page++;
             } else if (page == 1) {
                 if (!scannerValue.equals("done")) {
-
                     array.add(scannerValue);
-
                     for (String tmp : array) {
                         String[] tmpArr = tmp.split("/");
-                        System.out.println("삼품명" + tmpArr[0]);
-                        System.out.println("상품코드" + tmpArr[1]);
-                        System.out.println("가격" + tmpArr[2]);
-                        System.out.println("개수"+ tmpArr[3]);
+                        System.out.println("상품코드" + tmpArr[0]);
+                        System.out.println("개수" + tmpArr[1]);
                     }
-
                 } else {
-                    System.out.println("결제완료^ㅡ^!! \n -메인화면으로 가시려면 \"home\"을 입력해주세요!1"); //결제기록 db로 보내기
+                    System.out.println("결제완료^ㅡ^!!");
+                    //String tmp : array 모아서 프린트하기
+                    System.out.println(array);
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     page = 0;
                 }
             }
-
         } else if ("2".equals(modType)) {
             if (page == 0) {
                 System.out.println("날짜를 입력해주세요");
@@ -65,25 +61,31 @@ public class initClass {
                     date = scannerValue;
                     page++;
                 }
-                System.out.println(date); //db에서 결제기록 받고 시간 순서대로 index부여해서 보여주기
+                System.out.println(date + "목록입니다");
+                //더미 목록 보여주기
+                // 더미목록에서 index 입력하면
+                // 해당 화면
+                // 취소
                 page--; //인덱스 입력면 해당 결제기록 보여주기
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
                 System.out.println("날짜를 입력해주세요");
                 page++;
-
             } else if (page == 1) {
                 if (startDate == null) {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    System.out.println(startDate+" "+endDate); // startDate endDate 날짜 사이의 통계 보여주기
+                    System.out.println(startDate+" "+endDate);
+                    //startDate endDate 날짜 사이의 더미데이터 보여주기
+
+                    }
                 }
             }else if (page == 2){
 
             }
-        }
+
         return null;
     }
 
