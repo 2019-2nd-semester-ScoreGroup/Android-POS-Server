@@ -3,10 +3,12 @@ package Manager;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class NetworkManager {
     private static final int PORT = 8080;
     private ServerController serverController;
+    private Scanner scanner = new Scanner(System.in);
 
     NetworkManager(ServerController serverController)
     {
@@ -17,6 +19,32 @@ public class NetworkManager {
     public void Run() {
         try
         {
+            System.out.println("Point of Sales System");
+
+            for(int i = 0; i < 30; i++)
+                System.out.print("-");
+
+            System.out.println("");
+
+            new Thread(()->
+            {
+                String s = "";
+
+                while(!s.equals("exit"))
+                {
+                    System.out.println("exit code is 'exit'\n");
+
+                    s =scanner.nextLine();
+
+                    if(s.equals("exit"))
+                    {
+                        System.out.println("close...");
+                        scanner.close();
+                        System.exit(0);
+                    }
+                }
+            }).start();
+
             ServerSocket serverSocket = new ServerSocket(PORT);
 
             while(true)
