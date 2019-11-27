@@ -1,5 +1,6 @@
 package Console;
 
+import java.awt.desktop.SystemEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -14,6 +15,7 @@ public class initClass {
     public String startDate;
     public String endDate;
     public String date;
+    public int count;
 
     // 생성자입니다.
     public initClass() {
@@ -36,16 +38,15 @@ public class initClass {
 
     /**
      * @param array : 물건이 담겨있는 HashMap<String, String> 타입의 ArrayList배열
-     * @param item : 위의 HashMap 배열과 비교할 String 값
+     * @param item  : 위의 HashMap 배열과 비교할 String 값
      * @return 아이템이 있을 경우 index, 없을 경우 -1을 리턴합니다.
-     *
      */
-    private int findItemIndex(ArrayList<HashMap<String, String>> array, String item){
+    private int findItemIndex(ArrayList<HashMap<String, String>> array, String item) {
         int i = 0;
-        for(HashMap<String, String> tmp : array){
-            if(item.equals(tmp.get("item"))){
+        for (HashMap<String, String> tmp : array) {
+            if (item.equals(tmp.get("item"))) {
                 return i;
-            };
+            }
             i++;
         }
         return (-1);
@@ -69,11 +70,11 @@ public class initClass {
                     int itemIndex = findItemIndex(array, input_item);
 
                     // 이미 값이 있을경우, amount만큼 기존값에 더합니다.
-                    if(itemIndex!=-1) {
+                    if (itemIndex != -1) {
                         String cur_amount = array.get(itemIndex).get("amount");
                         array.get(itemIndex).put("amount", "" +
                                 (Integer.parseInt(cur_amount) + Integer.parseInt(input_amount)));
-                    }else{
+                    } else {
                         hashmap.put("item", input_item);
                         hashmap.put("amount", input_amount);
                         array.add(hashmap);
@@ -100,40 +101,54 @@ public class initClass {
                     date = scannerValue;
                     page++;
                 }
+
                 System.out.println(date + "목록입니다");
 
                 for (int i = 0; i < 5; i++) {
                     System.out.println(i + " " + date);
                 }
-                page++;
-
-            } else if (page == 2) {
                 System.out.println("인덱스 입력");
-                //
+            } else if (page == 2) {
+                System.out.println(scannerValue + "번 결제목록입니다.");
+                for (int i = 0; i < 2; i++) {
+                    System.out.println("상품코드 123123" + i + "개수" + i);
+                }
                 page++;
+                System.out.println("삭제하시겠습니까?");
+
             } else if (page == 3) {
-                System.out.println("결제목록 detail");
-                page++; //취소시 page++
+                if ("yes".equals(scannerValue)) {
+                    System.out.println("결제기록이 취소되었습니다.");
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                }
+                if ("no".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
 
+                }
+                page = 0;
             } else if (page == 4) {
-                System.out.println("결제기록이 취소되었습니다.");
-
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
-                System.out.println("날짜를 입력해주세요");
+                System.out.println("시작날짜를 입력해주세요");
                 page++;
             } else if (page == 1) {
+                System.out.println("종료날짜를 입력해주세요");
                 if (startDate == null) {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    System.out.println(startDate + " " + endDate);
+                    System.out.println("시작날짜 " + startDate + " " + "종료날짜 " + endDate);
                     //startDate endDate 날짜 사이의 더미데이터 보여주기
-                    for (int i = 0; i < 5; i++) {
-                        System.out.println(startDate+i);
+                    for (int i = Integer.parseInt(startDate); i <= Integer.parseInt(endDate); i++) {
+                        for (int j = 0; j < 2; j++) {
+                            System.out.println(count + " " + i);
+                            count++;
+                        }
                     }
-
+                    count = 0;
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    page = 0;
                 }
             }
         } else if (page == 2) {
