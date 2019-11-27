@@ -63,9 +63,13 @@ public class initClass {
                     HashMap<String, String> hashmap = new HashMap<String, String>();
 
                     // 컴마 (구분자) 포함 여부에 따라 String 값을 설정합니다.
-                    String input_item = (scannerValue.contains(",")) ? scannerValue.split(",")[0] : scannerValue;
-                    String input_amount = (scannerValue.contains(",")) ? scannerValue.split(",")[1] : "1";
-
+                    String input_item = (scannerValue.contains(",")) ? scannerValue.split(",")[0].trim() : scannerValue.trim();
+                    String input_amount = (scannerValue.contains(",")) ? scannerValue.split(",")[1].trim() : "1";
+                    input_amount = input_amount.replaceAll("\\D", "");
+                    if(input_item.isEmpty()){
+                        System.out.println("ㅈㄹㄴ");
+                       return null;
+                    }
                     // 물건이 들어있는 hashmap 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
                     int itemIndex = findItemIndex(array, input_item);
 
@@ -93,15 +97,24 @@ public class initClass {
                 }
             }
         } else if ("2".equals(modType)) {
+            if (page != 0 && "back".equals(scannerValue)) {
+                if (page <= 0) {
+                    date = null;
+                } else if (page == 1) {
+                    page--;
+                } else {
+                    page -= 2;
+                }
+            }
             if (page == 0) {
                 System.out.println("날짜를 입력해주세요");
                 page++;
             } else if (page == 1) {
                 if (date == null) {
                     date = scannerValue;
-                    page++;
                 }
 
+                page++;
                 System.out.println(date + "목록입니다");
 
                 for (int i = 0; i < 5; i++) {
@@ -118,7 +131,7 @@ public class initClass {
 
             } else if (page == 3) {
                 if ("yes".equals(scannerValue)) {
-                    System.out.println("결제기록이 취소되었습니다.");
+                    System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 if ("no".equals(scannerValue)) {
