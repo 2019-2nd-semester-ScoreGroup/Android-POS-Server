@@ -53,4 +53,6 @@ public class Stock {
     public String toString() {
         return String.format("%s %s %d %d", key, name, price, amount);
     }
+
+    public String toString(int noneAmount) { return String.format("%s %s %d", key, name, price); }
 }
