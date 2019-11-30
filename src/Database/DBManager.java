@@ -295,7 +295,8 @@ public class DBManager {
      * @param end 끝날짜
      * @return 물건당 판매 갯수가 들어있는 리스트
      */
-    public Stock[] getSelling(Timestamp start,Timestamp end){
+    public Stock[] getSelling(Timestamp start,Timestamp end){return getSelling(start,end,TYPE_SELL);}
+    public Stock[] getSelling(Timestamp start,Timestamp end,byte type){
         Connection con=getConnection();
         Statement stat=getStatement(con);
         Stock[] result=null;
