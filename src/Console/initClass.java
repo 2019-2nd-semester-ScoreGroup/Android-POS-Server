@@ -1,7 +1,13 @@
 package Console;
 
+import Data.Change;
+import Data.Event;
+import Database.DBManager;
+
 import java.awt.desktop.SystemEventListener;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,7 +16,7 @@ public class initClass {
     // 인풋값 : 1. 상품바코드정보, 2.행동
 
     private static int page = 0;
-    private ArrayList<HashMap<String, String>> array;
+    private ArrayList<Change> array;
     public String modType;
     public String startDate;
     public String endDate;
@@ -19,13 +25,13 @@ public class initClass {
 
     // 생성자입니다.
     public initClass() {
-        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제,납품 \n 2 = 결제기록 \n 3 = 통계");
+        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품");
     }
 
     public void init(String modType) {
         this.modType = modType;
         page = 0;
-        array = new ArrayList<HashMap<String, String>>();
+        array = new ArrayList<Change>();
     }
 
     public void clearScreen() {
@@ -41,10 +47,10 @@ public class initClass {
      * @param item  : 위의 HashMap 배열과 비교할 String 값
      * @return 아이템이 있을 경우 index, 없을 경우 -1을 리턴합니다.
      */
-    private int findItemIndex(ArrayList<HashMap<String, String>> array, String item) {
+    private int findItemIndex(ArrayList<Change> array, String item) {
         int i = 0;
-        for (HashMap<String, String> tmp : array) {
-            if (item.equals(tmp.get("item"))) {
+        for (Change tmp : array) {
+            if (item.equals(tmp.getStockKey())) {
                 return i;
             }
             i++;
@@ -60,36 +66,44 @@ public class initClass {
             } else if (page == 1) {
                 // 스캐너 값 입력 받았을때 행동
                 if (!scannerValue.equals("done")) {
-                    HashMap<String, String> hashmap = new HashMap<String, String>();
 
                     // 컴마 (구분자) 포함 여부에 따라 String 값을 설정합니다.
                     String input_item = (scannerValue.contains(",")) ? scannerValue.split(",")[0].trim() : scannerValue.trim();
-                    String input_amount = (scannerValue.contains(",")) ? scannerValue.split(",")[1].trim() : "1";
-                    input_amount = input_amount.replaceAll("\\D", "");
-                    if(input_item.isEmpty()){
+                    String input_amount_String = (scannerValue.contains(",")) ? scannerValue.split(",")[1].trim() : "1";
+                    input_amount_String = input_amount_String.replaceAll("\\D", "");
+                    int input_amount = Integer.parseInt(input_amount_String);
+
+
+                    if (input_item.isEmpty()) {
                         System.out.println("ㅈㄹㄴ");
-                       return null;
+                        return null;
                     }
                     // 물건이 들어있는 hashmap 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
                     int itemIndex = findItemIndex(array, input_item);
 
                     // 이미 값이 있을경우, amount만큼 기존값에 더합니다.
                     if (itemIndex != -1) {
-                        String cur_amount = array.get(itemIndex).get("amount");
-                        array.get(itemIndex).put("amount", "" +
-                                (Integer.parseInt(cur_amount) + Integer.parseInt(input_amount)));
+                        int cur_amount = array.get(itemIndex).getAmount();
+                        array.get(itemIndex).setAmount(cur_amount + input_amount);
                     } else {
-                        hashmap.put("item", input_item);
-                        hashmap.put("amount", input_amount);
-                        array.add(hashmap);
+                        array.add(new Change(input_item, input_amount));
                     }
 
                     // 어레이 돌면서 콘솔에 값 찍어주는 분기처리
-                    for (HashMap<String, String> tmp : array) {
-                        System.out.println("상품코드" + tmp.get("item"));
-                        System.out.println("개수" + tmp.get("amount"));
+                    for (Change tmp : array) {
+                        System.out.println("상품코드" + tmp.getStockKey());
+                        System.out.println("개수" + tmp.getAmount());
                     }
                 } else {
+                    Date date = new Date();
+
+                    // 직접 DB에 넣는 친구
+                    Event vo = new Event((byte) 1, new Timestamp(date.getTime()), "");
+                    vo.setData(array);
+
+                    DBManager db = new DBManager();
+                    db.addEvent(vo);
+
                     System.out.println("결제완료^ㅡ^!!");
                     System.out.println(array);
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
@@ -168,29 +182,81 @@ public class initClass {
 
         }
 
+        if ("4".equals(modType)) {
+            if (page == 0) {
+                System.out.println("상품정보를 입력해주세요~^^");
+                page++;
+            } else if (page == 1) {
+                // 스캐너 값 입력 받았을때 행동
+                if (!scannerValue.equals("done")) {
+
+                    // 컴마 (구분자) 포함 여부에 따라 String 값을 설정합니다.
+                    String input_item = (scannerValue.contains(",")) ? scannerValue.split(",")[0].trim() : scannerValue.trim();
+                    String input_amount_String = (scannerValue.contains(",")) ? scannerValue.split(",")[1].trim() : "1";
+                    input_amount_String = input_amount_String.replaceAll("\\D", "");
+                    int input_amount = Integer.parseInt(input_amount_String);
+
+
+                    if (input_item.isEmpty()) {
+                        System.out.println("ㅈㄹㄴ");
+                        return null;
+                    }
+                    // 물건이 들어있는 hashmap 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
+                    int itemIndex = findItemIndex(array, input_item);
+
+                    // 이미 값이 있을경우, amount만큼 기존값에 더합니다.
+                    if (itemIndex != -1) {
+                        int cur_amount = array.get(itemIndex).getAmount();
+                        array.get(itemIndex).setAmount(cur_amount + input_amount);
+                    } else {
+                        array.add(new Change(input_item, input_amount));
+                    }
+
+                    // 어레이 돌면서 콘솔에 값 찍어주는 분기처리
+                    for (Change tmp : array) {
+                        System.out.println("상품코드" + tmp.getStockKey());
+                        System.out.println("개수" + tmp.getAmount());
+                    }
+                } else {
+                    Date date = new Date();
+
+                    // 직접 DB에 넣는 친구
+                    Event vo = new Event((byte) 2, new Timestamp(date.getTime()), "");
+                    vo.setData(array);
+
+                    DBManager db = new DBManager();
+                    db.addEvent(vo);
+
+                    System.out.println("결제완료^ㅡ^!!");
+                    System.out.println(array);
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    page = 0;
+                }
+            }
+        }
         return null;
     }
 
-    public static void main(String args[]) {
-        initClass init = new initClass();
-        Scanner scan = new Scanner(System.in);
-        String tmp = "";
-        do {
-            tmp = scan.nextLine();
-            init.clearScreen();
-            // home을 입력해서 메인메뉴로 돌아가는 경우,
-            if ("home".equals(tmp)) {
-                init = new initClass();
-            } else if (init.modType == null) {
-                init.init(tmp);
-                init.act(tmp);
-            } else {
-                init.act(tmp);
+        public static void main(String args[]){
+            initClass init = new initClass();
+            Scanner scan = new Scanner(System.in);
+            String tmp = "";
+            do {
+                tmp = scan.nextLine();
+                init.clearScreen();
+                // home을 입력해서 메인메뉴로 돌아가는 경우,
+                if ("home".equals(tmp)) {
+                    init = new initClass();
+                } else if (init.modType == null) {
+                    init.init(tmp);
+                    init.act(tmp);
+                } else {
+                    init.act(tmp);
 
-            }
-        } while (!"exit".equals(tmp));
+                }
+            } while (!"exit".equals(tmp));
 
-        System.out.println("종료 되었습니다.");
-        scan.close();
+            System.out.println("종료 되었습니다.");
+            scan.close();
+        }
     }
-}
