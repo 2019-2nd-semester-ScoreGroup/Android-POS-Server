@@ -42,8 +42,20 @@ public class Event {
 
     @Override
     public String toString() {
-        return String.format("(%d) %s - %s %s (%s)", key, byteToType(type), time.toString(), memo, byteToStatus(status));
+        return String.format("%d %s %s %s %s", key, byteToType(type), time.toString(), memo, byteToStatus(status));
 
+    }
+
+    public String toString(int recipe)
+    {
+        String ackMsg = byteToType(type) + time.toString() + memo;
+
+        for(Change c : data)
+        {
+            ackMsg.concat(c.stockKey + " " + c.amount + " " + c.eventKey + " " + c.key + ",");
+        }
+
+        return ackMsg;
     }
 
     public long getKey() {
