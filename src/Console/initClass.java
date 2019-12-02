@@ -2,6 +2,7 @@ package Console;
 
 import Data.Change;
 import Data.Event;
+import Data.Stock;
 import Database.DBManager;
 
 import java.awt.desktop.SystemEventListener;
@@ -22,6 +23,9 @@ public class initClass {
     public String endDate;
     public String date;
     public int count;
+    DBManager db = new DBManager();
+    Timestamp tsStartDate;
+    Timestamp tsEndDate;
 
     // 생성자입니다.
     public initClass() {
@@ -100,8 +104,6 @@ public class initClass {
                     // 직접 DB에 넣는 친구
                     Event vo = new Event((byte) 1, new Timestamp(date.getTime()), "");
                     vo.setData(array);
-
-                    DBManager db = new DBManager();
                     db.addEvent(vo);
 
                     System.out.println("결제완료^ㅡ^!!");
@@ -165,17 +167,16 @@ public class initClass {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    System.out.println("시작날짜 " + startDate + " " + "종료날짜 " + endDate);
-                    //startDate endDate 날짜 사이의 더미데이터 보여주기
-                    for (int i = Integer.parseInt(startDate); i <= Integer.parseInt(endDate); i++) {
-                        for (int j = 0; j < 2; j++) {
-                            System.out.println(count + " " + i);
-                            count++;
-                        }
+                    tsStartDate=Timestamp.valueOf(startDate);
+                    tsEndDate=Timestamp.valueOf(endDate);
+                    Stock[] stocks =  db.getSelling(tsStartDate,tsEndDate);
+                    for(Stock tmp : stocks){
+                        String stockName = tmp.getName();
+                        int stockPrice = tmp.getPrice();
+                        int amount = tmp.getAmount();
+
+                        System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice+ " , 갯수 : " + amount);
                     }
-                    count = 0;
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page = 0;
                 }
             }
         } else if (page == 2) {
