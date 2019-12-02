@@ -1,5 +1,6 @@
 package Manager;
 
+import Data.Change;
 import Data.Event;
 import Data.EventList;
 import Data.Stock;
@@ -89,15 +90,17 @@ public class ServerController {
      * @return [key] [name] [price] : 띄워쓰기로 연결된 문자열
      * @param networkMsg "getStocks"
      * @return [key] [name] [price],[key] [name] [price] [amount] ,... : stock마다 ,로 구분된 띄워쓰기로 연결된 문자열
-     * @param networkMsg "getEvent" + [eventKey]
+     * @param networkMsg "getEvent" + " " + [eventKey]
      * @return [type] [time] [memo] [c.stockKey] [c.amount] [c.eventKey] + [c.key],... : change마다 ,로 구분된 띄워쓰기로 연결된 문자열
-     * @param networkMsg "tryChangEvent" + [eventKey] + [status] : status(0 Normal, 1 Cancel, 2 NaN)
+     * @param networkMsg "tryChangEvent" + " " + [eventKey] + " " + [status] : status(0 Normal, 1 Cancel, 2 NaN)
      * @return true or false : 성공, 실패
-     * @param networkMsg "getEventList" + [type] : type(1 Sell, 2 delivery, 3 NaN)
+     * @param networkMsg "getEventList" + " " + [type] : type(1 Sell, 2 delivery, 3 NaN)
      * @return [key] [type] [totalPrice],... : event마다 ,로 구분된 띄워쓰기로 연결된 문자열
-     * @param networkMsg "getSelling" + [startTime] + [endTime] : startTime, endTime은 타임스탬프 형식(yyyy-MM-dd hh:mm:ss)
+     * @param networkMsg "getSelling" + " " + [startTime] + " " + [endTime] : startTime, endTime은 타임스탬프 형식(yyyy-MM-dd hh:mm:ss)
      * @return [key] [name] [price] [amount],... : startTime과 endTime 사이에 판매된 stock마다 ,로 구분된 띄워쓰기로 연결된 문자열
-     * @param networkMsg "addEvent" + [type] + [time] + [memo] + [status]
+     * @param networkMsg "addEvent" + " " + [type] + " " + [time] + " " + [memo] + " " + [status]
+     * @return [eventKey]
+     * @param networkMsg "addChange" + " " + [eventKey] + " " + [stockKey] + " " + [changedAmount]
      * @return [eventKey]
      */
     public String parseAndExecuteData(String networkMsg)
@@ -144,6 +147,22 @@ public class ServerController {
                 return "input key";
             Long key = toLong(stringTokenizer.nextToken());
             return dbManager.getEvent(key).toString(0);
+        }
+        else if(opcode.equals("addChange"))
+        {
+            if(!stringTokenizer.hasMoreTokens())
+                return "input eventKey";
+            String eventKey = stringTokenizer.nextToken();
+            if(!stringTokenizer.hasMoreTokens())
+                return "input stockKey";
+            String stockKey = stringTokenizer.nextToken();
+            if(!stringTokenizer.hasMoreTokens())
+                return "input changedAmount";
+            String changedAmount = stringTokenizer.nextToken();
+
+            Change change = new Change(stockKey, (int)toLong(changedAmount));
+
+            return Long.toString(dbManager.addChange(change));
         }
         else if(opcode.equals("tryChangeEvent"))
         {
