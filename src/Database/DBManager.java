@@ -126,12 +126,7 @@ public class DBManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-        for (Change c : event.getData()) {
-            c.setEventKey(retKey);
-            addChange(c);
-        }
+        
         commit(con);
         close(stat);
         close(con);
@@ -144,7 +139,7 @@ public class DBManager {
      * @param change 개별기록
      * @return 추가된 키
      */
-    private long addChange(Change change) {
+    public long addChange(Change change) {
         Connection con = getConnection();
         Statement stat = getStatement(con);
         String msg = String.format("INSERT INTO tchange (cevent,cstock,cnumber) VALUES (%d,'%s',%d);", change.getEventKey(), change.getStockKey(), change.getAmount());
@@ -295,7 +290,8 @@ public class DBManager {
      * @param end 끝날짜
      * @return 물건당 판매 갯수가 들어있는 리스트
      */
-    public Stock[] getSelling(Timestamp start,Timestamp end){
+    public Stock[] getSelling(Timestamp start,Timestamp end){return getSelling(start,end,TYPE_SELL);}
+    public Stock[] getSelling(Timestamp start,Timestamp end,byte type){
         Connection con=getConnection();
         Statement stat=getStatement(con);
         Stock[] result=null;
