@@ -245,12 +245,12 @@ public class ServerController {
             }
 
             if(!stringTokenizer.hasMoreTokens())
-                return "input memo";
-            String memo = stringTokenizer.nextToken();
-
-            if(!stringTokenizer.hasMoreTokens())
                 return "input status";
             Byte status = toByte(stringTokenizer.nextToken());
+
+            if(!stringTokenizer.hasMoreTokens())
+                return "input memo";
+            String memo = stringTokenizer.nextToken();
 
             Event event = new Event(type, timestamp, memo);
             event.setStatus(status);
