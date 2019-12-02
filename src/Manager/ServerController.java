@@ -98,7 +98,7 @@ public class ServerController {
      * @return [key] [type] [totalPrice],... : event마다 ,로 구분된 띄워쓰기로 연결된 문자열
      * @param networkMsg "getSelling" + " " + [startTime] + " " + [endTime] : startTime, endTime은 타임스탬프 형식(yyyy-MM-dd hh:mm:ss)
      * @return [key] [name] [price] [amount],... : startTime과 endTime 사이에 판매된 stock마다 ,로 구분된 띄워쓰기로 연결된 문자열
-     * @param networkMsg "addEvent" + " " + [type] + " " + [time] + " " + [memo] + " " + [status]
+     * @param networkMsg "addEvent" + " " + [type] + " " + [time] + " " + [status] + " " + [memo]
      * @return [eventKey]
      * @param networkMsg "addChange" + " " + [eventKey] + " " + [stockKey] + " " + [changedAmount]
      * @return [eventKey]
