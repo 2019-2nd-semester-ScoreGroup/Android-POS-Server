@@ -2,6 +2,7 @@ package Console;
 
 import Data.Change;
 import Data.Event;
+import Data.EventList;
 import Data.Stock;
 import Database.DBManager;
 
@@ -29,7 +30,7 @@ public class initClass {
 
     // 생성자입니다.
     public initClass() {
-        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품");
+        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품\n 5 = 납품기록 \n 6 = 품목관리");
     }
 
     public void init(String modType) {
@@ -46,11 +47,7 @@ public class initClass {
 
     // 일치하는 코드가 입력되어 있는지 찾고, 없으면 -1, 있으면 인덱스 리턴
 
-    /**
-     * @param array : 물건이 담겨있는 HashMap<String, String> 타입의 ArrayList배열
-     * @param item  : 위의 HashMap 배열과 비교할 String 값
-     * @return 아이템이 있을 경우 index, 없을 경우 -1을 리턴합니다.
-     */
+
     private int findItemIndex(ArrayList<Change> array, String item) {
         int i = 0;
         for (Change tmp : array) {
@@ -82,7 +79,7 @@ public class initClass {
                         System.out.println("ㅈㄹㄴ");
                         return null;
                     }
-                    // 물건이 들어있는 hashmap 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
+                    // 물건이 들어있는 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
                     int itemIndex = findItemIndex(array, input_item);
 
                     // 이미 값이 있을경우, amount만큼 기존값에 더합니다.
@@ -123,39 +120,30 @@ public class initClass {
                 }
             }
             if (page == 0) {
-                System.out.println("날짜를 입력해주세요");
+                System.out.println("전체 결제기록입니다.");
+                EventList[] eventLists = db.getEventList((byte) 1);
+                for (EventList tmp : eventLists) {
+                    long tmpKey = tmp.getKey();
+                    System.out.println(tmpKey);
+                }
                 page++;
             } else if (page == 1) {
-                if (date == null) {
-                    date = scannerValue;
-                }
-
+                System.out.println("키를 입력해주세요");
+                //key 값을 입력받으면
+                //Event event = db.getEvent();
+                //System.out.println("결제기록입니다.");
                 page++;
-                System.out.println(date + "목록입니다");
 
-                for (int i = 0; i < 5; i++) {
-                    System.out.println(i + " " + date);
-                }
-                System.out.println("인덱스 입력");
             } else if (page == 2) {
-                System.out.println(scannerValue + "번 결제목록입니다.");
-                for (int i = 0; i < 2; i++) {
-                    System.out.println("상품코드 123123" + i + "개수" + i);
-                }
-                page++;
-                System.out.println("삭제하시겠습니까?");
-
-            } else if (page == 3) {
+                System.out.println("결제기록을 취소하시겠습니까?");
                 if ("yes".equals(scannerValue)) {
                     System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 if ("no".equals(scannerValue)) {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-
                 }
                 page = 0;
-            } else if (page == 4) {
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
@@ -167,23 +155,19 @@ public class initClass {
                     startDate = scannerValue;
                 } else if (endDate == null) {
                     endDate = scannerValue;
-                    tsStartDate=Timestamp.valueOf(startDate);
-                    tsEndDate=Timestamp.valueOf(endDate);
-                    Stock[] stocks =  db.getSelling(tsStartDate,tsEndDate);
-                    for(Stock tmp : stocks){
+                    tsStartDate = Timestamp.valueOf(startDate);
+                    tsEndDate = Timestamp.valueOf(endDate);
+                    Stock[] stocks = db.getSelling(tsStartDate, tsEndDate);
+                    for (Stock tmp : stocks) {
                         String stockName = tmp.getName();
                         int stockPrice = tmp.getPrice();
                         int amount = tmp.getAmount();
 
-                        System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice+ " , 갯수 : " + amount);
+                        System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
                     }
                 }
             }
-        } else if (page == 2) {
-
-        }
-
-        if ("4".equals(modType)) {
+        } else if ("4".equals(modType)) {
             if (page == 0) {
                 System.out.println("상품정보를 입력해주세요~^^");
                 page++;
@@ -234,30 +218,85 @@ public class initClass {
                     page = 0;
                 }
             }
+        } else if ("5".equals(modType)) {
+            if (page != 0 && "back".equals(scannerValue)) {
+                if (page <= 0) {
+                    date = null;
+                } else if (page == 1) {
+                    page--;
+                } else {
+                    page -= 2;
+                }
+            }
+            if (page == 0) {
+                System.out.println("납품기록 입니다.");
+                EventList[] eventLists = db.getEventList((byte) 2);
+                page++;
+            } else if (page == 1) {
+                if (date == null) {
+                    date = scannerValue;
+                }
+
+                page++;
+                System.out.println(date + "목록입니다");
+
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(i + " " + date);
+                }
+                System.out.println("인덱스 입력");
+            } else if (page == 2) {
+                System.out.println(scannerValue + "번 결제목록입니다.");
+                for (int i = 0; i < 2; i++) {
+                    System.out.println("상품코드 123123" + i + "개수" + i);
+                }
+                page++;
+                System.out.println("삭제하시겠습니까?");
+
+            } else if (page == 3) {
+                if ("yes".equals(scannerValue)) {
+                    System.out.println("결제기록이 삭제되었습니다.");
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                }
+                if ("no".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+
+                }
+                page = 0;
+            }
+        }
+        else if ("6".equals(modType)){
+            Stock stock = db.getStock();
+            for(Stock tmp : stock){
+                int tmpAmount = tmp.getAmount();
+                String tmpName = tmp.getName();
+                int tmpPrice = tmp.getPrice();
+                System.out.println(tmpAmount + tmpPrice + tmpName);
+            }
+
         }
         return null;
     }
 
-        public static void main(String args[]){
-            initClass init = new initClass();
-            Scanner scan = new Scanner(System.in);
-            String tmp = "";
-            do {
-                tmp = scan.nextLine();
-                init.clearScreen();
-                // home을 입력해서 메인메뉴로 돌아가는 경우,
-                if ("home".equals(tmp)) {
-                    init = new initClass();
-                } else if (init.modType == null) {
-                    init.init(tmp);
-                    init.act(tmp);
-                } else {
-                    init.act(tmp);
+    public static void main(String args[]) {
+        initClass init = new initClass();
+        Scanner scan = new Scanner(System.in);
+        String tmp = "";
+        do {
+            tmp = scan.nextLine();
+            init.clearScreen();
+            // home을 입력해서 메인메뉴로 돌아가는 경우,
+            if ("home".equals(tmp)) {
+                init = new initClass();
+            } else if (init.modType == null) {
+                init.init(tmp);
+                init.act(tmp);
+            } else {
+                init.act(tmp);
 
-                }
-            } while (!"exit".equals(tmp));
+            }
+        } while (!"exit".equals(tmp));
 
-            System.out.println("종료 되었습니다.");
-            scan.close();
-        }
+        System.out.println("종료 되었습니다.");
+        scan.close();
     }
+}
