@@ -325,6 +325,7 @@ public class DBManager {
             result = new Stock[ret.getRow()];
             ret.first();
             int index = 0;
+
             do {
                 Stock t = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
                 t.setAmount(ret.getInt("totNum"));
