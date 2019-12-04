@@ -148,7 +148,7 @@ public class ServerController {
             Long key = toLong(stringTokenizer.nextToken());
             return dbManager.getEvent(key).toString(0);
         }
-        /*else if(opcode.equals("addChange"))
+        else if(opcode.equals("addChange"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input eventKey";
@@ -163,7 +163,7 @@ public class ServerController {
             Change change = new Change(stockKey, (int)toLong(changedAmount));
 
             return Long.toString(dbManager.addChange(change));
-        }*/
+        }
         else if(opcode.equals("tryChangeEvent"))
         {
             if(!stringTokenizer.hasMoreTokens())

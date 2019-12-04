@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 public class MainForDB {
-    public static void main(String args[]){
-       // for(int i=0;i<10;i++)
+    public static void main(String args[]) {
+        // for(int i=0;i<10;i++)
         {
             Random rand = new Random();
             DBManager dbManager = new DBManager("localhost", "androidpos", "root", "1234");
@@ -29,12 +29,21 @@ public class MainForDB {
 
             //TODO 내역 추가
 
-        Event event=new Event(DBManager.TYPE_SELL, Timestamp.valueOf(LocalDateTime.now()),"Testing");
-        for(int i=0;i<6;i++){
-            Change temp=new Change(""+(i+1),rand.nextInt(100));
-            event.getData().add(temp);
-        }
-        dbManager.addEvent(event);
+            for (int i = 0; i < 2; i++) {
+                Event event = new Event(DBManager.TYPE_SELL, Timestamp.valueOf(LocalDateTime.now()), "Testing");
+                for (int j = 0; j < 6; j++) {
+                    Change temp = new Change("" + (i + 1), rand.nextInt(100));
+                    event.getData().add(temp);
+                }
+                dbManager.addEvent(event);
+            }
+
+/*            for (int j = 0; j < 6; j++) {
+                Change temp = new Change("" + (i + 1), rand.nextInt(100));
+                event.getData().add(temp);
+
+                dbManager.addEvent(event);
+            }*/
 
             //dbManager.setNoisy(true);
             System.out.println(dbManager.getEvent(1));

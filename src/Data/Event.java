@@ -52,7 +52,8 @@ public class Event {
 
         for(Change c : data)
         {
-            ackMsg.concat(c.stockKey + " " + c.amount + " " + c.eventKey + " " + c.key + ",");
+            //ackMsg.concat(" " + c.stockKey + " " + Integer.toString(c.amount) + " " + Long.toString(c.eventKey) + " " + Long.toString(c.key) + ",");
+            ackMsg = ackMsg + String.format("%s %d %l %l,", c.stockKey, c.amount, c.eventKey, c.key);
         }
 
         return ackMsg;
