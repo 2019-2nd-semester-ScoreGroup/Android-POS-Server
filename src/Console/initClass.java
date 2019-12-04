@@ -23,7 +23,7 @@ public class initClass {
     public String startDate;
     public String endDate;
     public String date;
-    //DBManager db = new DBManager(localhost,"androidpos","201512087","201512087");
+    DBManager db = new DBManager("localhost","androidpos","root","201512087");
     Timestamp tsStartDate;
     Timestamp tsEndDate;
     Event vo;
@@ -60,6 +60,7 @@ public class initClass {
     }
 
     public String act(String scannerValue) {
+
         if ("1".equals(modType)) {
             if (page == 0) {
                 System.out.println("상품정보를 입력해주세요~^^");
@@ -99,9 +100,17 @@ public class initClass {
                     Date date = new Date();
 
                     // 직접 DB에 넣는 친구
-                    Event vo = new Event((byte) 1, new Timestamp(date.getTime()), "");
-                    vo.setData(array);
-                    db.addEvent(vo);
+                    Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
+                    db.addEvent(evt);
+
+                    for(Change tmpCng : array){
+                        Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
+
+                        cng.setEventKey(1); // 수정해야함
+                        //todo 이벤트키를 자동으로 받아야 하는데 그게 안돼
+                        db.addChange(cng);
+                    }
+
 
                     System.out.println("결제완료^ㅡ^!!");
                     System.out.println(array);
@@ -110,6 +119,8 @@ public class initClass {
                 }
             }
         } else if ("2".equals(modType)) {
+
+
             if (page != 0 && "back".equals(scannerValue)) {
                 if (page <= 0) {
                     date = null;
@@ -122,21 +133,26 @@ public class initClass {
             if (page == 0) {
                 System.out.println("전체 결제기록입니다.");
                 EventList[] eventLists = db.getEventList((byte) 1);
+                //todo 터짐
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
                     System.out.println(tmpKey);
                 }
                 page++;
             } else if (page == 1) {
+                long index_long = (long)Integer.parseInt(scannerValue);
+
                 System.out.println("키를 입력해주세요");
-                //key 값을 입력받으면
-                //Event event = db.getEvent();
-                //System.out.println("결제기록입니다.");
+                Event event = db.getEvent(index_long);
+                System.out.println("결제기록입니다.");
                 page++;
 
             } else if (page == 2) {
+                long index_long = (long)Integer.parseInt(scannerValue);
+
                 System.out.println("결제기록을 취소하시겠습니까?");
                 if ("yes".equals(scannerValue)) {
+                    db.tryChangeEvent(index_long ,(byte)2);
                     System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
@@ -158,6 +174,7 @@ public class initClass {
                     tsStartDate = Timestamp.valueOf(startDate);
                     tsEndDate = Timestamp.valueOf(endDate);
                     Stock[] stocks = db.getSelling(tsStartDate, tsEndDate);
+                    //TODO 타임스탬프로 보냈지만 안됨.
                     for (Stock tmp : stocks) {
                         String stockName = tmp.getName();
                         int stockPrice = tmp.getPrice();
@@ -210,7 +227,7 @@ public class initClass {
                     vo.setData(array);
 
                     db.addEvent(vo);
-
+                    //todo 2번처럼 바꿔야하나 얘는 되니까 일단 나둠
                     System.out.println("결제완료^ㅡ^!!");
                     System.out.println(array);
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
@@ -230,6 +247,7 @@ public class initClass {
             if (page == 0) {
                 System.out.println("납품기록 입니다.");
                 EventList[] eventLists = db.getEventList((byte) 2);
+                //todo 터짐
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
                     System.out.println(tmpKey);
@@ -243,6 +261,7 @@ public class initClass {
                 vo.getData();
                 vo.getKey();
                 //여기 작업하다 맘
+                //todo 왜이렇게 돼있지?? 2번처럼 바꿀예정
                 System.out.println("결제기록을 취소 하시겠습니까?");
 
             } else if (page == 2) {
