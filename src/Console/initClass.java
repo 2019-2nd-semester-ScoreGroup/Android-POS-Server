@@ -23,14 +23,14 @@ public class initClass {
     public String startDate;
     public String endDate;
     public String date;
-    public int count;
-    DBManager db = new DBManager();
+    //DBManager db = new DBManager(localhost,"androidpos","201512087","201512087");
     Timestamp tsStartDate;
     Timestamp tsEndDate;
+    Event vo;
 
     // 생성자입니다.
     public initClass() {
-        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품\n 5 = 납품기록 \n 6 = 품목관리");
+        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품\n 5 = 납품기록 \n");
     }
 
     public void init(String modType) {
@@ -206,10 +206,9 @@ public class initClass {
                     Date date = new Date();
 
                     // 직접 DB에 넣는 친구
-                    Event vo = new Event((byte) 2, new Timestamp(date.getTime()), "");
+                    vo = new Event((byte) 2, new Timestamp(date.getTime()), "");
                     vo.setData(array);
 
-                    DBManager db = new DBManager();
                     db.addEvent(vo);
 
                     System.out.println("결제완료^ㅡ^!!");
@@ -231,30 +230,25 @@ public class initClass {
             if (page == 0) {
                 System.out.println("납품기록 입니다.");
                 EventList[] eventLists = db.getEventList((byte) 2);
+                for (EventList tmp : eventLists) {
+                    long tmpKey = tmp.getKey();
+                    System.out.println(tmpKey);
+                }
                 page++;
             } else if (page == 1) {
-                if (date == null) {
-                    date = scannerValue;
-                }
-
+                System.out.println("인덱스입력");
+                long eventKey = Long.parseLong(scannerValue);
+                vo = db.getEvent(eventKey);
                 page++;
-                System.out.println(date + "목록입니다");
+                vo.getData();
+                vo.getKey();
+                //여기 작업하다 맘
+                System.out.println("결제기록을 취소 하시겠습니까?");
 
-                for (int i = 0; i < 5; i++) {
-                    System.out.println(i + " " + date);
-                }
-                System.out.println("인덱스 입력");
             } else if (page == 2) {
-                System.out.println(scannerValue + "번 결제목록입니다.");
-                for (int i = 0; i < 2; i++) {
-                    System.out.println("상품코드 123123" + i + "개수" + i);
-                }
-                page++;
-                System.out.println("삭제하시겠습니까?");
-
-            } else if (page == 3) {
                 if ("yes".equals(scannerValue)) {
                     System.out.println("결제기록이 삭제되었습니다.");
+                    //Event vo = db.tryChangeEvent(,)
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 if ("no".equals(scannerValue)) {
@@ -263,16 +257,6 @@ public class initClass {
                 }
                 page = 0;
             }
-        }
-        else if ("6".equals(modType)){
-            Stock stock = db.getStock();
-            for(Stock tmp : stock){
-                int tmpAmount = tmp.getAmount();
-                String tmpName = tmp.getName();
-                int tmpPrice = tmp.getPrice();
-                System.out.println(tmpAmount + tmpPrice + tmpName);
-            }
-
         }
         return null;
     }
@@ -295,7 +279,6 @@ public class initClass {
 
             }
         } while (!"exit".equals(tmp));
-
         System.out.println("종료 되었습니다.");
         scan.close();
     }
