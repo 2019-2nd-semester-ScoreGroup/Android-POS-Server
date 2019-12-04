@@ -100,6 +100,9 @@ public class ServerController {
      * @return [eventKey]
      */
     public String parseAndExecuteData(String networkMsg) {
+        if(networkMsg==null)
+            return "input error";
+
         StringTokenizer stringTokenizer;
         stringTokenizer = new StringTokenizer(networkMsg, " ");
         String opcode = stringTokenizer.nextToken();
@@ -162,7 +165,7 @@ public class ServerController {
                 return "type";
             Byte type = toByte(stringTokenizer.nextToken());
             EventList[] event = dbManager.getEventList(type);
-            String ackMsg = null;
+            String ackMsg = "";
 
             for (EventList e : event) {
                 ackMsg = ackMsg.concat(e.toString());
@@ -209,8 +212,8 @@ public class ServerController {
             String time = stringTokenizer.nextToken();
 
             if (!stringTokenizer.hasMoreTokens())
-                return "input time";
-            time.concat(" " + stringTokenizer.nextToken());
+                return "invalid time";
+            time = time.concat(" " + stringTokenizer.nextToken());
             
             Timestamp timestamp = null;
             try {
