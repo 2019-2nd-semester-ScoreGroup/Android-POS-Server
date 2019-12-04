@@ -29,7 +29,7 @@ public class ServerController {
             networkManager = new NetworkManager(this);
         }).start();
 
-        dbManager = new DBManager("localhost", "androidpos", "root", "15937456");
+        dbManager = new DBManager("localhost", "androidpos", "root", "1234");
     }
 
     public static void main(String[] args) {
@@ -137,7 +137,7 @@ public class ServerController {
             Stock []stocks = dbManager.getStocks();
             for(Stock s : stocks)
             {
-                ackMsg = ackMsg + s.toString(0) + ",";
+                ackMsg = ackMsg + s.toString() + ",";
             }
             return ackMsg;
         }
@@ -148,7 +148,7 @@ public class ServerController {
             Long key = toLong(stringTokenizer.nextToken());
             return dbManager.getEvent(key).toString(0);
         }
-        else if(opcode.equals("addChange"))
+        /*else if(opcode.equals("addChange"))
         {
             if(!stringTokenizer.hasMoreTokens())
                 return "input eventKey";
@@ -163,7 +163,7 @@ public class ServerController {
             Change change = new Change(stockKey, (int)toLong(changedAmount));
 
             return Long.toString(dbManager.addChange(change));
-        }
+        }*/
         else if(opcode.equals("tryChangeEvent"))
         {
             if(!stringTokenizer.hasMoreTokens())

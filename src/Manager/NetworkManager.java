@@ -111,7 +111,7 @@ class ConnectionWrap implements Runnable{
     {
         msg = inputBuffer.readLine();
 
-        System.out.println(msg);
+        System.out.println("query " + msg);
     }
 
     //메시지 해석을 요청
@@ -125,5 +125,7 @@ class ConnectionWrap implements Runnable{
     {
         printWriter.println(msg);
         printWriter.flush();
+
+        System.out.println("ack " + msg);
     }
 }
