@@ -188,13 +188,13 @@ public class DBManager {
             close(con);
             ret.last();
             result = new Stock[ret.getRow()];
-            ret.first();
+            ret.beforeFirst();
             int index = 0;
-            do {
+            while (ret.next()) {
                 result[index] = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
                 result[index].setAmount(ret.getInt("samount"));
                 index++;
-            } while (ret.next());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -215,17 +215,17 @@ public class DBManager {
         String msg = "SELECT * FROM (tevent JOIN tchange ON tchange.cevent=tevent.ekey) WHERE tevent.ekey=%d;";
         try {
             ret = stat.executeQuery(String.format(msg, key));
-            ret.first();
+            if(!ret.next())return null;
+            ret.beforeFirst();
             result = new Event(ret.getByte("etype"), ret.getTimestamp("etime"), ret.getString("ememo"));
             result.setData(new ArrayList<Change>());
             ArrayList<Change> data = result.getData();
-            do {
+            while (ret.next()){
                 Change t = new Change(ret.getString("cstock"), ret.getInt("cnumber"));
                 t.setEventKey(ret.getLong("cevent"));
                 t.setKey(ret.getLong("ckey"));
                 data.add(t);
             }
-            while (ret.next());
             log(msg);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -280,16 +280,16 @@ public class DBManager {
             ret = stat.executeQuery(String.format(msg, type));
             ret.last();
             result = new EventList[ret.getRow()];
-            ret.first();
+            ret.beforeFirst();
             int index = 0;
-            do {
+            while (ret.next()){
                 EventList t = new EventList();
                 t.setKey(ret.getLong("ekey"));
                 t.setTime(ret.getTimestamp("etime"));
                 t.setTotalPrice(ret.getInt("total"));
                 result[index] = t;
                 index++;
-            } while (ret.next());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -323,15 +323,14 @@ public class DBManager {
             log(msg);
             ret.last();
             result = new Stock[ret.getRow()];
-            ret.first();
+            ret.beforeFirst();
             int index = 0;
-
-            do {
+            while (ret.next()){
                 Stock t = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
                 t.setAmount(ret.getInt("totNum"));
                 result[index] = t;
                 index++;
-            } while (ret.next());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
