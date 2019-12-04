@@ -48,12 +48,12 @@ public class Event {
 
     public String toString(int recipe)
     {
-        String ackMsg = byteToType(type) + time.toString() + memo;
+        String ackMsg;
+        ackMsg = String.format("%s %s %s ", byteToType(type), time.toString(), memo);
 
         for(Change c : data)
         {
-            //ackMsg.concat(" " + c.stockKey + " " + Integer.toString(c.amount) + " " + Long.toString(c.eventKey) + " " + Long.toString(c.key) + ",");
-            ackMsg = ackMsg + String.format("%s %d %l %l,", c.stockKey, c.amount, c.eventKey, c.key);
+            ackMsg = ackMsg + String.format("%s %d %d %d,", c.stockKey, c.amount, c.eventKey, c.key);
         }
 
         return ackMsg;

@@ -106,7 +106,7 @@ public class ServerController {
     public String parseAndExecuteData(String networkMsg)
     {
         StringTokenizer stringTokenizer;
-        stringTokenizer = new StringTokenizer(networkMsg, ",");
+        stringTokenizer = new StringTokenizer(networkMsg, " ");
         String opcode = stringTokenizer.nextToken();
 
         if(opcode.equals("editStock"))
