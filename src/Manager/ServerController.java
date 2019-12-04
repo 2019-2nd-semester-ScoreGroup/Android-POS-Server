@@ -82,7 +82,7 @@ public class ServerController {
      * []안의 값은 대치되어야 함
      * @param "editStock" + " " + [key] + " " + [name] + " " + [price]
      * @return  true or false : 성공, 실패
-     * @param "getStock"
+     * @param "getStock" + [key]
      * @return [key] [name] [price] : 띄워쓰기로 연결된 문자열
      * @param "getStocks"
      * @return [key] [name] [price],[key] [name] [price] [amount] ,... : stock마다 ,로 구분된 띄워쓰기로 연결된 문자열
@@ -207,6 +207,11 @@ public class ServerController {
             if (!stringTokenizer.hasMoreTokens())
                 return "input time";
             String time = stringTokenizer.nextToken();
+
+            if (!stringTokenizer.hasMoreTokens())
+                return "input time";
+            time.concat(" " + stringTokenizer.nextToken());
+            
             Timestamp timestamp = null;
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
