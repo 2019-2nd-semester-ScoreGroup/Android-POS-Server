@@ -279,7 +279,7 @@ public class DBManager {
         Statement stat = getStatement(con);
         ResultSet ret = null;
         EventList[] result = null;
-        String msg = "SELECT ekey,etime, SUM(sprice*cnumber) as total FROM (tevent JOIN (tchange JOIN tstock ON tchange.cstock=tstock.skey) ON tchange.cevent=tevent.ekey)WHERE etype=%d GROUP BY eKey;";
+        String msg = "SELECT ekey,etime, SUM(sprice*cnumber) as total FROM (tevent JOIN (tchange JOIN tstock ON tchange.cstock=tstock.skey) ON tchange.cevent=tevent.ekey)WHERE etype=%d AND estatus=0 GROUP BY eKey;";
         try {
             ret = stat.executeQuery(String.format(msg, type));
             ret.last();
