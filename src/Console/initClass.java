@@ -19,10 +19,9 @@ public class initClass {
 
     private static int page = 0;
     private ArrayList<Change> array;
-    public String modType;
-    public String startDate;
-    public String endDate;
-    public String date;
+    private String modType, startDate, endDate, date;
+    private long index_long;
+
     DBManager db = new DBManager("localhost","androidpos","root","201512087");
     Timestamp tsStartDate;
     Timestamp tsEndDate;
@@ -101,13 +100,13 @@ public class initClass {
 
                     // 직접 DB에 넣는 친구
                     Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
-                    db.addEvent(evt);
+                    long 변수이름_추천 = db.addEvent(evt);
 
                     for(Change tmpCng : array){
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
 
-                        cng.setEventKey(1); // 수정해야함
-                        //todo 이벤트키를 자동으로 받아야 하는데 그게 안돼
+                        cng.setEventKey(변수이름_추천);
+                        
                         db.addChange(cng);
                     }
 
@@ -133,26 +132,33 @@ public class initClass {
             if (page == 0) {
                 System.out.println("전체 결제기록입니다.");
                 EventList[] eventLists = db.getEventList((byte) 1);
-                //todo 터짐
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    System.out.println(tmpKey);
+                    byte statusB = db.getEvent(tmpKey).getStatus();
+                    System.out.println(statusB);
+                    String status = (statusB==0) ? "결제완료" : "결제취소";
+                    System.out.println(tmpKey + "     /  상태 :" + status);
                 }
-                page++;
-            } else if (page == 1) {
-                long index_long = (long)Integer.parseInt(scannerValue);
 
                 System.out.println("키를 입력해주세요");
+                page++;
+            } else if (page == 1) {
+                index_long = (long)Integer.parseInt(scannerValue);
+
                 Event event = db.getEvent(index_long);
                 System.out.println("결제기록입니다.");
+                ArrayList<Change> cngArr = event.getData();
+                for(Change tmpCng : cngArr){
+                    System.out.println("바코드" +tmpCng.getStockKey()+" 개수 "+tmpCng.getAmount());
+                }
+                System.out.println("결제기록을 취소하시겠습니까?");
+
                 page++;
 
             } else if (page == 2) {
-                long index_long = (long)Integer.parseInt(scannerValue);
 
-                System.out.println("결제기록을 취소하시겠습니까?");
                 if ("yes".equals(scannerValue)) {
-                    db.tryChangeEvent(index_long ,(byte)2);
+                    db.tryChangeEvent(index_long ,(byte)1);
                     System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
@@ -166,15 +172,14 @@ public class initClass {
                 System.out.println("시작날짜를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                System.out.println("종료날짜를 입력해주세요");
                 if (startDate == null) {
                     startDate = scannerValue;
+                    System.out.println("종료날짜를 입력해주세요");
                 } else if (endDate == null) {
                     endDate = scannerValue;
                     tsStartDate = Timestamp.valueOf(startDate);
                     tsEndDate = Timestamp.valueOf(endDate);
                     Stock[] stocks = db.getSelling(tsStartDate, tsEndDate);
-                    //TODO 타임스탬프로 보냈지만 안됨.
                     for (Stock tmp : stocks) {
                         String stockName = tmp.getName();
                         int stockPrice = tmp.getPrice();
