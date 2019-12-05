@@ -85,6 +85,7 @@ class ConnectionWrap implements Runnable{
         if(msg.equals("hello"))
             reply("world!");
          */
+        close();
 
         System.out.println(Thread.currentThread().getName() + " thread end");
     }
@@ -128,4 +129,17 @@ class ConnectionWrap implements Runnable{
 
         System.out.println("ack " + msg);
     }
+
+    private void close()
+    {
+        try {
+            inputBuffer.close();
+            printWriter.close();
+        }catch(IOException e)
+        {
+            System.out.println("IO close error");
+            e.printStackTrace();
+        }
+    }
+
 }
