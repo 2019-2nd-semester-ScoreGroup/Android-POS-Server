@@ -28,7 +28,7 @@ public class ServerController {
             networkManager = new NetworkManager(this);
         }).start();
 
-        dbManager = new DBManager("localhost", "androidpos", "root", "root");
+        dbManager = new DBManager("localhost", "androidpos", "root", "1234");
     }
 
     public static void main(String[] args) {
@@ -136,7 +136,8 @@ public class ServerController {
             if (!stringTokenizer.hasMoreTokens())
                 return "input key";
             Long key = toLong(stringTokenizer.nextToken());
-            return dbManager.getEvent(key).toString(0);
+            Event event = dbManager.getEvent(key);
+            return event.equals(null) ? event.toString(0) : "null";
         } else if (opcode.equals("addChange")) {
             if (!stringTokenizer.hasMoreTokens())
                 return "input eventKey";
