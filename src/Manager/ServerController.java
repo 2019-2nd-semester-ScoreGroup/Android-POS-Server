@@ -28,7 +28,7 @@ public class ServerController {
             networkManager = new NetworkManager(this);
         }).start();
 
-        dbManager = new DBManager("localhost", "androidpos", "root", "1234");
+        dbManager = new DBManager("localhost", "androidpos", "root", "root");
     }
 
     public static void main(String[] args) {
