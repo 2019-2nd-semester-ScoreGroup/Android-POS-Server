@@ -95,7 +95,8 @@ public class DBManager {
         String msg = "SELECT * FROM tstock where skey=%s";
         try {
             ret = stat.executeQuery(String.format(msg, key));
-            ret.first();
+            ret.beforeFirst();
+            if(!ret.next())return null;
             int index = 0;
             result = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
         } catch (SQLException e) {
@@ -128,7 +129,8 @@ public class DBManager {
         }
         long retKey = 0;
         try {
-            ret.first();
+            ret.beforeFirst();
+            if(!ret.next())return -1;
             retKey = ret.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -156,7 +158,8 @@ public class DBManager {
         try {
             stat.executeQuery(msg);
             ResultSet ret = stat.executeQuery("SELECT LAST_INSERT_ID();");
-            ret.first();
+            ret.beforeFirst();
+            if(!ret.next())return -1;
             retKey = ret.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
