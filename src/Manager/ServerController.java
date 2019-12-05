@@ -137,7 +137,7 @@ public class ServerController {
                 return "input key";
             Long key = toLong(stringTokenizer.nextToken());
             Event event = dbManager.getEvent(key);
-            return event.equals(null) ? event.toString(0) : "null";
+            return event != null ? event.toString(0) : "null";
         } else if (opcode.equals("addChange")) {
             if (!stringTokenizer.hasMoreTokens())
                 return "input eventKey";
