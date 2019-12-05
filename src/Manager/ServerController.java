@@ -182,7 +182,7 @@ public class ServerController {
 
             if (!stringTokenizer.hasMoreTokens())
                 return "input end time";
-            String endTime = stringTokenizer.nextToken() + "00:00:00";
+            String endTime = stringTokenizer.nextToken() + " 00:00:00";
             Timestamp endTimeStamp = null;
 
             try {
