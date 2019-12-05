@@ -24,6 +24,7 @@ public class MainForDB {
             dbManager.editStock(new Stock("4", "delta", 400));
             dbManager.editStock(new Stock("5", "echo", 500));
 
+
             //TODO 품목수정
             dbManager.editStock(new Stock("6", "foxtrot", 600));
 
