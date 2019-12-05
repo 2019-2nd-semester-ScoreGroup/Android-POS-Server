@@ -31,11 +31,13 @@ public class MainForDB {
 
             for (int i = 0; i < 2; i++) {
                 Event event = new Event(DBManager.TYPE_SELL, Timestamp.valueOf(LocalDateTime.now()), "Testing");
+                long ret=dbManager.addEvent(event);
                 for (int j = 0; j < 6; j++) {
-                    Change temp = new Change("" + (i + 1), rand.nextInt(100));
-                    event.getData().add(temp);
+                    Change temp = new Change("" + (j + 1), rand.nextInt(100));
+                    temp.setEventKey(ret);
+                    dbManager.addChange(temp);
                 }
-                dbManager.addEvent(event);
+
             }
 
 /*            for (int j = 0; j < 6; j++) {
