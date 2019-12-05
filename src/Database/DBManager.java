@@ -219,9 +219,10 @@ public class DBManager {
         try {
             ret = stat.executeQuery(String.format(msg, key));
             if(!ret.next())return null;
-            ret.beforeFirst();
+            ret.first();
             result = new Event(ret.getByte("etype"), ret.getTimestamp("etime"), ret.getString("ememo"));
             result.setData(new ArrayList<Change>());
+            ret.beforeFirst();
             ArrayList<Change> data = result.getData();
             while (ret.next()){
                 Change t = new Change(ret.getString("cstock"), ret.getInt("cnumber"));
