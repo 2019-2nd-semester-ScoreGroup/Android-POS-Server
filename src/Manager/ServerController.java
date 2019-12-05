@@ -148,7 +148,8 @@ public class ServerController {
                 return "input changedAmount";
             String changedAmount = stringTokenizer.nextToken();
 
-            Change change = new Change(stockKey, (int) toLong(changedAmount));
+            Change change = new Change(stockKey, toInt(changedAmount));
+            change.setEventKey(toLong(eventKey));
 
             return Long.toString(dbManager.addChange(change));
         } else if (opcode.equals("tryChangeEvent")) {
@@ -252,7 +253,17 @@ public class ServerController {
         try {
             return Long.parseLong(str);
         } catch (NumberFormatException e) {
-            return 3;
+            return 999;
+        }
+    }
+
+    private int toInt(String str)
+    {
+        try{
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e)
+        {
+            return 999;
         }
     }
 }
