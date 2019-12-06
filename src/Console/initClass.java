@@ -22,7 +22,7 @@ public class initClass {
     private String modType, startDate, endDate, date;
     private long index_long;
 
-    DBManager db = new DBManager("localhost","androidpos","root","201512087");
+    DBManager db = new DBManager("localhost", "androidpos", "root", "201512087");
     Timestamp tsStartDate;
     Timestamp tsEndDate;
     Event vo;
@@ -62,7 +62,8 @@ public class initClass {
 
         if ("1".equals(modType)) {
             if (page == 0) {
-                System.out.println("상품정보를 입력해주세요~^^");
+                System.out.println("상품정보를 입력해주세요~^^(stockkey,amount)");
+                System.out.println("결제를 원하시면 done을 입력해주세요");
                 page++;
             } else if (page == 1) {
                 // 스캐너 값 입력 받았을때 행동
@@ -102,11 +103,11 @@ public class initClass {
                     Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
                     long 변수이름_추천 = db.addEvent(evt);
 
-                    for(Change tmpCng : array){
+                    for (Change tmpCng : array) {
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
 
                         cng.setEventKey(변수이름_추천);
-                        
+
                         db.addChange(cng);
                     }
 
@@ -118,8 +119,6 @@ public class initClass {
                 }
             }
         } else if ("2".equals(modType)) {
-
-
             if (page != 0 && "back".equals(scannerValue)) {
                 if (page <= 0) {
                     date = null;
@@ -136,29 +135,29 @@ public class initClass {
                     long tmpKey = tmp.getKey();
                     byte statusB = db.getEvent(tmpKey).getStatus();
                     System.out.println(statusB);
-                    String status = (statusB==0) ? "결제완료" : "결제취소";
+                    String status = (statusB == 0) ? "결제완료" : "결제취소";
                     System.out.println(tmpKey + "     /  상태 :" + status);
                 }
 
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                index_long = (long)Integer.parseInt(scannerValue);
+                index_long = (long) Integer.parseInt(scannerValue);
 
                 Event event = db.getEvent(index_long);
                 System.out.println("결제기록입니다.");
                 ArrayList<Change> cngArr = event.getData();
-                for(Change tmpCng : cngArr){
-                    System.out.println("바코드" +tmpCng.getStockKey()+" 개수 "+tmpCng.getAmount());
+                for (Change tmpCng : cngArr) {
+                    System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
                 }
-                System.out.println("결제기록을 취소하시겠습니까?");
+                System.out.println("결제기록을 삭제하시겠습니까?(yes/no)");
 
                 page++;
 
             } else if (page == 2) {
 
                 if ("yes".equals(scannerValue)) {
-                    db.tryChangeEvent(index_long ,(byte)1);
+                    db.tryChangeEvent(index_long, (byte) 1);
                     System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
@@ -169,12 +168,12 @@ public class initClass {
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
-                System.out.println("시작날짜를 입력해주세요");
+                System.out.println("시작날짜를 입력해주세요(yyyy-mm-dd hh:mm:ss)");
                 page++;
             } else if (page == 1) {
                 if (startDate == null) {
                     startDate = scannerValue;
-                    System.out.println("종료날짜를 입력해주세요");
+                    System.out.println("종료날짜를 입력해주세요(yyyy-mm-dd hh:mm:ss)");
                 } else if (endDate == null) {
                     endDate = scannerValue;
                     tsStartDate = Timestamp.valueOf(startDate);
@@ -184,14 +183,14 @@ public class initClass {
                         String stockName = tmp.getName();
                         int stockPrice = tmp.getPrice();
                         int amount = tmp.getAmount();
-
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
                     }
                 }
             }
         } else if ("4".equals(modType)) {
             if (page == 0) {
-                System.out.println("상품정보를 입력해주세요~^^");
+                System.out.println("상품정보를 입력해주세요~^^(stockkey,amount)");
+                System.out.println("결제를 원하시면 done을 입력해주세요");
                 page++;
             } else if (page == 1) {
                 // 스캐너 값 입력 받았을때 행동
@@ -228,15 +227,16 @@ public class initClass {
                     Date date = new Date();
 
                     // 직접 DB에 넣는 친구
-                    vo = new Event((byte) 2, new Timestamp(date.getTime()), "");
-                    vo.setData(array);
+                    Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
+                    long 변수이름_추천 = db.addEvent(evt);
 
-                    db.addEvent(vo);
-                    //todo 2번처럼 바꿔야하나 얘는 되니까 일단 나둠
-                    System.out.println("결제완료^ㅡ^!!");
-                    System.out.println(array);
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page = 0;
+                    for (Change tmpCng : array) {
+                        Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
+
+                        cng.setEventKey(변수이름_추천);
+
+                        db.addChange(cng);
+                    }
                 }
             }
         } else if ("5".equals(modType)) {
@@ -250,34 +250,35 @@ public class initClass {
                 }
             }
             if (page == 0) {
-                System.out.println("납품기록 입니다.");
+                System.out.println("전체 납품기록입니다.");
                 EventList[] eventLists = db.getEventList((byte) 2);
-                //todo 터짐
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    System.out.println(tmpKey);
+                    byte statusB = db.getEvent(tmpKey).getStatus();
+                    System.out.println(statusB);
+                    String status = (statusB == 0) ? "납품완료" : "납품취소";
+                    System.out.println(tmpKey + "     /  상태 :" + status);
                 }
+                System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                System.out.println("인덱스입력");
-                long eventKey = Long.parseLong(scannerValue);
-                vo = db.getEvent(eventKey);
+                index_long = (long) Integer.parseInt(scannerValue);
+                Event event = db.getEvent(index_long);
+                System.out.println("해당 납품기록입니다.");
+                ArrayList<Change> cngArr = event.getData();
+                for (Change tmpCng : cngArr) {
+                    System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
+                }
+                System.out.println("납품기록을 삭제하시겠습니까?(yes/no)");
                 page++;
-                vo.getData();
-                vo.getKey();
-                //여기 작업하다 맘
-                //todo 왜이렇게 돼있지?? 2번처럼 바꿀예정
-                System.out.println("결제기록을 취소 하시겠습니까?");
-
             } else if (page == 2) {
                 if ("yes".equals(scannerValue)) {
-                    System.out.println("결제기록이 삭제되었습니다.");
-                    //Event vo = db.tryChangeEvent(,)
+                    db.tryChangeEvent(index_long, (byte) 2);
+                    System.out.println("납품기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 if ("no".equals(scannerValue)) {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-
                 }
                 page = 0;
             }
