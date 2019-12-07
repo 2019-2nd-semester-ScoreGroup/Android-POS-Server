@@ -31,6 +31,8 @@ public class NetworkManager {
             {
                 //클라이언트 연결 소켓 생성
                 Socket socket = serverSocket.accept();
+                socket.setSoTimeout(5000);
+
                 //스레드를 새로 생성하여 래핑한 소켓 생성
                 new Thread(()->{
                     ConnectionWrap connectionSocket = new ConnectionWrap(socket, serverController);
@@ -64,7 +66,7 @@ class ConnectionWrap implements Runnable{
 
         System.out.println(Thread.currentThread().getName() + " thread accpet");
 
-        //IO 객체를 생성하지 못하면 소켓을 종료, 전송 실패해도 에러는 나지 않음
+        //IO 객체를 생성하지 못하면 소켓을 종료, 전송 실패하면 재시도
         try
         {
             getIOstream();
@@ -81,10 +83,6 @@ class ConnectionWrap implements Runnable{
             }
         }
 
-        /* 시험용
-        if(msg.equals("hello"))
-            reply("world!");
-         */
         close();
 
         System.out.println(Thread.currentThread().getName() + " thread end");
@@ -141,5 +139,4 @@ class ConnectionWrap implements Runnable{
             e.printStackTrace();
         }
     }
-
 }
