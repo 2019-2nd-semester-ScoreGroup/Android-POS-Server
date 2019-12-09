@@ -28,7 +28,7 @@ public class initClass {
 
     // 생성자입니다.
     public initClass() {
-        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 통계\n 4 = 납품\n 5 = 납품기록 \n");
+        System.out.println("POS 모드를 설정해주세요 \n 1 = 결제 \n 2 = 결제기록 \n 3 = 판매량\n 4 = 납품\n 5 = 납품기록 \n");
     }
 
     public void init(String modType) {
@@ -129,10 +129,7 @@ public class initClass {
                 EventList[] eventLists = db.getEventList((byte) 1);
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    byte statusB = db.getEvent(tmpKey).getStatus();
-                    System.out.println(statusB);
-                    String status = (statusB == 0) ? "결제완료" : "결제취소";
-                    System.out.println(tmpKey + "     /  상태 :" + status);
+                    System.out.println(tmpKey);
                 }
 
                 System.out.println("키를 입력해주세요");
@@ -219,11 +216,12 @@ public class initClass {
                         System.out.println("상품코드" + tmp.getStockKey());
                         System.out.println("개수" + tmp.getAmount());
                     }
-                } else {
+                }
+                else {
                     Date date = new Date();
 
                     // 직접 DB에 넣는 친구
-                    Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
+                    Event evt = new Event((byte) 2, new Timestamp(date.getTime()), "");
                     long 변수이름_추천 = db.addEvent(evt);
 
                     for (Change tmpCng : array) {
@@ -233,6 +231,9 @@ public class initClass {
 
                         db.addChange(cng);
                     }
+                    System.out.println("납품완료");
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    page=0;
                 }
             }
         } else if ("5".equals(modType)) {
@@ -250,10 +251,7 @@ public class initClass {
                 EventList[] eventLists = db.getEventList((byte) 2);
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    byte statusB = db.getEvent(tmpKey).getStatus();
-                    System.out.println(statusB);
-                    String status = (statusB == 0) ? "납품완료" : "납품취소";
-                    System.out.println(tmpKey + "     /  상태 :" + status);
+                    System.out.println(tmpKey);
                 }
                 System.out.println("키를 입력해주세요");
                 page++;
