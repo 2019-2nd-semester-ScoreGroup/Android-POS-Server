@@ -25,7 +25,6 @@ public class initClass {
     DBManager db = new DBManager("localhost", "androidpos", "root", "201512087");
     Timestamp tsStartDate;
     Timestamp tsEndDate;
-    Event vo;
 
     // 생성자입니다.
     public initClass() {
@@ -110,10 +109,7 @@ public class initClass {
 
                         db.addChange(cng);
                     }
-
-
                     System.out.println("결제완료^ㅡ^!!");
-                    System.out.println(array);
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     page = 0;
                 }
@@ -185,6 +181,7 @@ public class initClass {
                         int amount = tmp.getAmount();
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
                     }
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
             }
         } else if ("4".equals(modType)) {
@@ -201,7 +198,6 @@ public class initClass {
                     String input_amount_String = (scannerValue.contains(",")) ? scannerValue.split(",")[1].trim() : "1";
                     input_amount_String = input_amount_String.replaceAll("\\D", "");
                     int input_amount = Integer.parseInt(input_amount_String);
-
 
                     if (input_item.isEmpty()) {
                         System.out.println("ㅈㄹㄴ");

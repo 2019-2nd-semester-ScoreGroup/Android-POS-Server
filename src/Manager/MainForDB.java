@@ -16,7 +16,7 @@ public class MainForDB {
         // for(int i=0;i<10;i++)
         {
             Random rand = new Random();
-            DBManager dbManager = new DBManager("localhost", "androidpos", "root", "1234");
+            DBManager dbManager = new DBManager("localhost", "androidpos", "root", "201512087");
 
             dbManager.editStock(new Stock("1", "alpha", 100));
             dbManager.editStock(new Stock("2", "bravo", 200));
