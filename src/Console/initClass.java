@@ -19,8 +19,9 @@ public class initClass {
 
     private static int page = 0;
     private ArrayList<Change> array;
-    private String modType, startDate, endDate, date;
+    private String input, modType, startDate, endDate, date;
     private long index_long;
+    private Event event;
 
     DBManager db = new DBManager("localhost", "androidpos", "root", "201512087");
     Timestamp tsStartDate;
@@ -107,11 +108,15 @@ public class initClass {
 
                         cng.setEventKey(변수이름_추천);
 
-                        db.addChange(cng);
+                        if(db.addChange(cng)==-1){
+                            System.out.println("잘못된 입력");
+                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                        }
+                        else {
+                            db.addChange(cng);
+                            System.out.println("결제완료^ㅡ^!!");
+                        }
                     }
-                    System.out.println("결제완료^ㅡ^!!");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page = 0;
                 }
             }
         } else if ("2".equals(modType)) {
@@ -129,16 +134,22 @@ public class initClass {
                 EventList[] eventLists = db.getEventList((byte) 1);
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    System.out.println(tmpKey);
+                    int tmpTotalPrice = tmp.getTotalPrice();
+                    System.out.println("키 : "+tmpKey + " 총 가격 : "+tmpTotalPrice);
                 }
 
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
                 index_long = (long) Integer.parseInt(scannerValue);
-
                 Event event = db.getEvent(index_long);
+
+                if(event == null){
+                    System.out.println("잘못된 입력");
+                    System.out.println("home");
+                }
                 System.out.println("결제기록입니다.");
+
                 ArrayList<Change> cngArr = event.getData();
                 for (Change tmpCng : cngArr) {
                     System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
@@ -148,16 +159,18 @@ public class initClass {
                 page++;
 
             } else if (page == 2) {
-
                 if ("yes".equals(scannerValue)) {
                     db.tryChangeEvent(index_long, (byte) 1);
                     System.out.println("결제기록이 삭제되었습니다.");
+                    page = 0;
+                }
+                else if ("no".equals(scannerValue)) {
+                    page = 0;
+                }
+                else {
+                    System.out.println("잘못된 입력");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
-                if ("no".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                }
-                page = 0;
             }
         } else if ("3".equals(modType)) {
             if (page == 0) {
@@ -177,14 +190,14 @@ public class initClass {
                         int stockPrice = tmp.getPrice();
                         int amount = tmp.getAmount();
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
+                        System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     }
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
             }
         } else if ("4".equals(modType)) {
             if (page == 0) {
                 System.out.println("상품정보를 입력해주세요~^^(stockkey,amount)");
-                System.out.println("결제를 원하시면 done을 입력해주세요");
+                System.out.println("납품을 원하시면 done을 입력해주세요");
                 page++;
             } else if (page == 1) {
                 // 스캐너 값 입력 받았을때 행동
@@ -229,11 +242,18 @@ public class initClass {
 
                         cng.setEventKey(변수이름_추천);
 
-                        db.addChange(cng);
+                        if(db.addChange(cng)==-1)
+                        {
+                            System.out.println("잘못된 입력");
+                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                            page=0;
+                        }
+                        else{
+                            db.addChange(cng);
+                            System.out.println("납품완료");
+                            page=0;
+                        }
                     }
-                    System.out.println("납품완료");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page=0;
                 }
             }
         } else if ("5".equals(modType)) {
@@ -251,7 +271,8 @@ public class initClass {
                 EventList[] eventLists = db.getEventList((byte) 2);
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
-                    System.out.println(tmpKey);
+                    int tmpTotalPrice = tmp.getTotalPrice();
+                    System.out.println("키 : "+tmpKey+" 총 가격 " + tmpTotalPrice);
                 }
                 System.out.println("키를 입력해주세요");
                 page++;
@@ -271,7 +292,11 @@ public class initClass {
                     System.out.println("납품기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
-                if ("no".equals(scannerValue)) {
+                else if ("no".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                }
+                else {
+                    System.out.println("잘못된 입력");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 page = 0;
@@ -285,12 +310,14 @@ public class initClass {
         Scanner scan = new Scanner(System.in);
         String tmp = "";
         do {
-            tmp = scan.nextLine();
+            String input = scan.nextLine();
+            tmp =input.toLowerCase();
             init.clearScreen();
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
                 init = new initClass();
             } else if (init.modType == null) {
+                System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 init.init(tmp);
                 init.act(tmp);
             } else {
