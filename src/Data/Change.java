@@ -12,7 +12,7 @@ public class Change {
 
     @Override
     public String toString(){
-        return String.format("(%d) %s X %d in %d",key,stockKey,amount,eventKey);
+        return String.format("%d_%s_%d_%d",key,stockKey,amount,eventKey);
     }
 
     public String getStockKey() {

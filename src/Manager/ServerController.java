@@ -117,37 +117,41 @@ public class ServerController {
     /**DB와 통신을 위한 메소드
      * Network Manager에서 받은 소켓에서 보내는 데이터를 해석하고 DBManager를 호출한 후, ack를 반환
      * 인수와 반환값은 String
+     * 인수마다 _로 구분
      * []안의 값은 대치되어야 함
      * ( A, B ) 는 A or B
      * 인수가 포맷을 따르지 않을 경우 invalid syntax
      * 인수안에 필요한 데이터가 없으면 해당 데이터를 요구하는 스트링 반환                                                                 ex) "input key"
      * DBManager의 리턴이 null이면 null반환
-     * @param "editStock" + " " + [key] + " " + [name] + " " + [price]                                                              ex) "editStock 1 alpha 100"
+     * @param "editStock" + " " + [key] + " " + [name] + " " + [price]                                                              ex) "editStock_1_alpha_100"
      * @return  (true, false) : 성공, 실패                                                                                           ex) "true"
-     * @param "getStock" + [key]                                                                                                    ex) "getStock 1"
-     * @return [key] [name] [price]                                                                                                 ex) "1 alpha 100"
+     * @param "getStock" + [key]                                                                                                    ex) "getStock_1"
+     * @return [key] [name] [price]                                                                                                 ex) "1_alpha_100"
      * @param "getStocks"                                                                                                           ex) "getStocks"
-     * @return [key] [name] [price],[key] [name] [price] [amount] ,... : stock마다 ,로 구분된 띄워쓰기로 연결된 문자열                  ex) "1 alpha 100, 2 bravo 200,"
+     * @return [key] [name] [price],[key] [name] [price] [amount] ,... : stock마다 ,로 구분된 띄워쓰기로 연결된 문자열                  ex) "1_alpha_100, 2_bravo_200,"
      * @param "getEvent" + " " + [eventKey]                                                                                         ex) "getEvent 2"
-     * @return [type] [time] [memo] [c.stockKey] [c.amount] [c.eventKey] + [c.key],... : change마다 ,로 구분된 띄워쓰기로 연결된 문자열 ex) "DELIVERY 2019-12-05 14:40:31.0 delivering 1 1 2 6,2 1 2 7,3 1 2 8,4 1 2 9,"
-     * @param "tryChangEvent" + " " + [eventKey] + " " + [status] : status(0 Normal, 1 Cancel, 2 NaN)                               ex) "tryChangeEvent 1 0"
+     * @return [type] [time] [memo] [c.stockKey] [c.amount] [c.eventKey] + [c.key],... : change마다 ,로 구분된 띄워쓰기로 연결된 문자열 ex) "DELIVERY_2019-12-05_14:40:31.0_delivering_1_1_2_6,2_1_2_7,3_1_2_8,4_1_2_9,"
+     * @param "tryChangEvent" + " " + [eventKey] + " " + [status] : status(0 Normal, 1 Cancel, 2 NaN)                               ex) "tryChangeEvent_1_0"
      * @return (true, false) : 성공, 실패                                                                                            ex) "false"
-     * @param "getEventList" + " " + [type] : type(1 Sell, 2 delivery, 3 NaN)                                                       ex) "getEventList 1"
-     * @return [key] [time] [totalPrice],... : event마다 ,로 구분된 띄워쓰기로 연결된 문자열                                            ex) "2 2019-12-05 14:40:31.0 1000,"
-     * @param "getSelling" + " " + [startTime] + " " + [endTime] : startTime, endTime은 타임스탬프 형식(yyyy-MM-dd hh:mm:ss)          ex) "getSelling 2019-11-1 2019-12-17"
-     * @return [key] [name] [price] [amount],... : startTime과 endTime 사이에 판매된 stock마다 ,로 구분된 띄워쓰기로 연결된 문자열        ex) "1 alpha 100 -2,2 bravo 200 -7,3 charlie 300 -1,5 echo 500 -1,6 foxtrot 600 -1,"
-     * @param "addEvent" + " " + [type] + " " + [time] + " " + [status] + " " + [memo]                                              ex) "addEvent 2 2019-12-07 14:00:26.443 0 delivering"
+     * @param "getEventList" + " " + [type] : type(1 Sell, 2 delivery, 3 NaN)                                                       ex) "getEventList_1"
+     * @return [key] [time] [totalPrice],... : event마다 ,로 구분된 띄워쓰기로 연결된 문자열                                            ex) "2_2019-12-05_14:40:31.0_1000,"
+     * @param "getSelling" + " " + [startTime] + " " + [endTime] : startTime, endTime은 타임스탬프 형식(yyyy-MM-dd hh:mm:ss)          ex) "getSelling_2019-11-1_2019-12-17"
+     * @return [key] [name] [price] [amount],... : startTime과 endTime 사이에 판매된 stock마다 ,로 구분된 띄워쓰기로 연결된 문자열        ex) "1_alpha_100_-2,2_bravo_200_-7,3_charlie_300_-1,5_echo_500_-1,6_foxtrot_600_-1,"
+     * @param "addEvent" + " " + [type] + " " + [time] + " " + [status] + " " + [memo]                                              ex) "addEvent_2_2019-12-07_14:00:26.443_0_delivering"
      * @return [eventKey]                                                                                                           ex) "4"
-     * @param "addChange" + " " + [eventKey] + " " + [stockKey] + " " + [changedAmount]                                             ex) "addChange 4 1 1"
+     * @param "addChange" + " " + [eventKey] + " " + [stockKey] + " " + [changedAmount]                                             ex) "addChange_4_1_1"
      * @return ([changeKey], false)                                                                                                 ex) "12"
      */
     public String parseAndExecuteData(String networkMsg) {
+
+        String delim = "_";
+
         //null 입력 받을 시 null 반환
         if(networkMsg==null)
             return "input error";
 
         StringTokenizer stringTokenizer;
-        stringTokenizer = new StringTokenizer(networkMsg, " ");
+        stringTokenizer = new StringTokenizer(networkMsg, delim);
         String opcode = stringTokenizer.nextToken();
 
         try {
@@ -282,7 +286,7 @@ public class ServerController {
 
                 if (!stringTokenizer.hasMoreTokens())
                     return "invalid time";
-                time = time.concat(" " + stringTokenizer.nextToken());
+                time = time.concat("" + stringTokenizer.nextToken());
 
                 Timestamp timestamp = null;
                 try {

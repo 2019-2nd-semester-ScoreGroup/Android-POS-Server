@@ -42,18 +42,18 @@ public class Event {
 
     @Override
     public String toString() {
-        return String.format("%d %s %s %s %s", key, byteToType(type), time.toString(), memo, byteToStatus(status));
+        return String.format("%d_%s_%s_%s_%s", key, byteToType(type), time.toString(), memo, byteToStatus(status));
 
     }
 
     public String toString(int recipe)
     {
         String ackMsg;
-        ackMsg = String.format("%s %s %s ", byteToType(type), time.toString(), memo);
+        ackMsg = String.format("%s_%s_%s_", byteToType(type), time.toString(), memo);
 
         for(Change c : data)
         {
-            ackMsg = ackMsg + String.format("%s %d %d %d,", c.stockKey, c.amount, c.eventKey, c.key);
+            ackMsg = ackMsg + String.format("%s_%d_%d_%d,", c.stockKey, c.amount, c.eventKey, c.key);
         }
 
         return ackMsg;

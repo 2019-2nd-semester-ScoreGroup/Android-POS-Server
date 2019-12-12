@@ -33,6 +33,6 @@ public class EventList {
     int totalPrice;
     @Override
     public String toString(){
-        return String.format("%d %s %d", key,time.toString(),totalPrice);
+        return String.format("%d_%s_%d", key,time.toString(),totalPrice);
     }
 }
