@@ -10,13 +10,24 @@ import java.sql.Timestamp;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Scanner;
 
 public class MainForDB {
     public static void main(String args[]) {
         // for(int i=0;i<10;i++)
         {
             Random rand = new Random();
-            DBManager dbManager = new DBManager("localhost", "androidpos", "root", "1234");
+            Scanner scanner=new Scanner(System.in);
+            String dbId,dbPw;
+            int dbPort;
+            System.out.println("DB ID");
+            dbId=scanner.nextLine();
+            System.out.println("DB PW");
+            dbPw=scanner.nextLine();
+            System.out.println("DB Port");
+            dbPort=scanner.nextInt();
+
+            DBManager dbManager = new DBManager("localhost", "androidpos", dbId,dbPw,dbPort);
 
             dbManager.editStock(new Stock("1", "alpha", 100));
             dbManager.editStock(new Stock("2", "bravo", 200));

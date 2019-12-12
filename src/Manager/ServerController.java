@@ -61,8 +61,17 @@ public class ServerController {
             networkManager = new NetworkManager(this);
         }).start();
 
-        dbManager = new DBManager("localhost", "androidpos", "root", "1234");
         scanner = new Scanner(System.in);
+
+        String dbId,dbPw;
+        int dbPort;
+        System.out.println("DB ID");
+        dbId=scanner.nextLine();
+        System.out.println("DB PW");
+        dbPw=scanner.nextLine();
+        System.out.println("DB Port");
+        dbPort=scanner.nextInt();
+        DBManager dbManager = new DBManager("localhost", "androidpos", dbId,dbPw,dbPort);
     }
 
     public static void main(String[] args) {

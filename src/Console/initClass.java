@@ -23,7 +23,7 @@ public class initClass {
     public String startDate;
     public String endDate;
     public String date;
-    DBManager db = new DBManager("localhost","androidpos","root","201512087");
+    DBManager db = new DBManager("localhost","androidpos","root","201512087",3306);
     Timestamp tsStartDate;
     Timestamp tsEndDate;
     Event vo;

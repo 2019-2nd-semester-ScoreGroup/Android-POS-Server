@@ -33,6 +33,7 @@ public class DBManager {
     private String database = "AndroidPOS"; // MySQL DATABASE 이름
     private String user_name = "root"; //  MySQL 서버 아이디
     private String password = "root"; // MySQL 서버 비밀번호
+    private int port = 3306;
     ConnectionBuilder builder;
 
     public DBManager() {
@@ -47,11 +48,12 @@ public class DBManager {
      * @param ID 유저ID
      * @param PW 비밀번호
      */
-    public DBManager(String IP, String DB, String ID, String PW) {
+    public DBManager(String IP, String DB, String ID, String PW, int port) {
         server = IP; // MySQL 서버 주소
         database = DB; // MySQL DATABASE 이름
         user_name = ID; //  MySQL 서버 아이디
         password = PW; // MySQL 서버 비밀번호
+        this.port = port;
         initialize();
     }
 
@@ -96,7 +98,7 @@ public class DBManager {
         try {
             ret = stat.executeQuery(String.format(msg, key));
             ret.beforeFirst();
-            if(!ret.next())return null;
+            if (!ret.next()) return null;
             int index = 0;
             result = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
         } catch (SQLException e) {
@@ -130,7 +132,7 @@ public class DBManager {
         long retKey = 0;
         try {
             ret.beforeFirst();
-            if(!ret.next())return -1;
+            if (!ret.next()) return -1;
             retKey = ret.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -159,7 +161,7 @@ public class DBManager {
             stat.executeQuery(msg);
             ResultSet ret = stat.executeQuery("SELECT LAST_INSERT_ID();");
             ret.beforeFirst();
-            if(!ret.next())return -1;
+            if (!ret.next()) return -1;
             retKey = ret.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -218,13 +220,13 @@ public class DBManager {
         String msg = "SELECT * FROM (tevent JOIN tchange ON tchange.cevent=tevent.ekey) WHERE tevent.ekey=%d;";
         try {
             ret = stat.executeQuery(String.format(msg, key));
-            if(!ret.next())return null;
+            if (!ret.next()) return null;
             ret.first();
             result = new Event(ret.getByte("etype"), ret.getTimestamp("etime"), ret.getString("ememo"));
             result.setData(new ArrayList<Change>());
             ret.beforeFirst();
             ArrayList<Change> data = result.getData();
-            while (ret.next()){
+            while (ret.next()) {
                 Change t = new Change(ret.getString("cstock"), ret.getInt("cnumber"));
                 t.setEventKey(ret.getLong("cevent"));
                 t.setKey(ret.getLong("ckey"));
@@ -286,7 +288,7 @@ public class DBManager {
             result = new EventList[ret.getRow()];
             ret.beforeFirst();
             int index = 0;
-            while (ret.next()){
+            while (ret.next()) {
                 EventList t = new EventList();
                 t.setKey(ret.getLong("ekey"));
                 t.setTime(ret.getTimestamp("etime"));
@@ -319,9 +321,9 @@ public class DBManager {
         Statement stat = getStatement(con);
         Stock[] result = null;
         String msg = String.format("SELECT skey,sname, SUM(cnumber) as totNum,sprice \n" +
-            "FROM ((tevent JOIN tchange ON tevent.ekey=tchange.cevent)JOIN tstock ON tchange.cstock=tstock.skey) \n" +
-            "WHERE (tevent.etime BETWEEN TIMESTAMP('%s') AND  TIMESTAMP('%s')) AND etype=%d AND estatus=0\n" +
-            "GROUP BY skey;", start.toString(), end.toString(),type);
+                "FROM ((tevent JOIN tchange ON tevent.ekey=tchange.cevent)JOIN tstock ON tchange.cstock=tstock.skey) \n" +
+                "WHERE (tevent.etime BETWEEN TIMESTAMP('%s') AND  TIMESTAMP('%s')) AND etype=%d AND estatus=0\n" +
+                "GROUP BY skey;", start.toString(), end.toString(), type);
         try {
             ResultSet ret = stat.executeQuery(msg);
             log(msg);
@@ -329,7 +331,7 @@ public class DBManager {
             result = new Stock[ret.getRow()];
             ret.beforeFirst();
             int index = 0;
-            while (ret.next()){
+            while (ret.next()) {
                 Stock t = new Stock(ret.getString("skey"), ret.getString("sname"), ret.getInt("sprice"));
                 t.setAmount(ret.getInt("totNum"));
                 result[index] = t;
@@ -355,7 +357,7 @@ public class DBManager {
     }
 
     private Connection getConnection() {
-        return getConnection("jdbc:mysql://" + server + "/" + database + "?useSSL=false");
+        return getConnection("jdbc:mysql://" + server + ":" + port + "/" + database + "?useSSL=false");
     }
 
     /**
@@ -445,7 +447,7 @@ public class DBManager {
      */
     private void initialize() {
 
-        Connection con = getConnection("jdbc:mysql://" + server + "/?useSSL=false");
+        Connection con = getConnection("jdbc:mysql://" + server + ":" + port + "/?useSSL=false");
         Statement stat = getStatement(con);
         try {
             stat.executeQuery("CREATE DATABASE IF NOT EXISTS androidPos;");
