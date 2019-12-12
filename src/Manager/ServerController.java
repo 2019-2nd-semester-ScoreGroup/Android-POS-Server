@@ -286,7 +286,7 @@ public class ServerController {
 
                 if (!stringTokenizer.hasMoreTokens())
                     return "invalid time";
-                time = time.concat("" + stringTokenizer.nextToken());
+                time = time.concat(" " + stringTokenizer.nextToken());
 
                 Timestamp timestamp = null;
                 try {
