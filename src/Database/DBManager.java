@@ -320,7 +320,7 @@ public class DBManager {
         Stock[] result = null;
         String msg = String.format("SELECT skey,sname, SUM(cnumber) as totNum,sprice \n" +
             "FROM ((tevent JOIN tchange ON tevent.ekey=tchange.cevent)JOIN tstock ON tchange.cstock=tstock.skey) \n" +
-            "WHERE (tevent.etime BETWEEN TIMESTAMP('%s') AND  TIMESTAMP('%s')) AND etype=%d\n" +
+            "WHERE (tevent.etime BETWEEN TIMESTAMP('%s') AND  TIMESTAMP('%s')) AND etype=%d AND estatus=0\n" +
             "GROUP BY skey;", start.toString(), end.toString(),type);
         try {
             ResultSet ret = stat.executeQuery(msg);

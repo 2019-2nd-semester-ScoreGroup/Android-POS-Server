@@ -214,7 +214,7 @@ public class ServerController {
                 if(ack == -1)
                     return "false";
 
-                return Long.toString(dbManager.addChange(change));
+                return Long.toString(ack);
             } else if (opcode.equals("tryChangeEvent")) {
                 if (!stringTokenizer.hasMoreTokens())
                     return "input key";

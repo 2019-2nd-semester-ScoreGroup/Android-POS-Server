@@ -51,7 +51,7 @@ public class Stock {
 
     @Override
     public String toString() {
-        return String.format("%s_%s_%d_%d", key, name.replace(" ", "_"), price, amount);
+        return String.format("%s_%s_%d_%d", key, name, price, amount);
     }
 
     public String toString(int noneAmount) { return String.format("%s_%s_%d", key, name, price); }
