@@ -77,7 +77,7 @@ public class initClass {
 
 
                     if (input_item.isEmpty()) {
-                        System.out.println("ㅈㄹㄴ");
+                        System.out.println("제대로 입력해주시기 바랍니다.");
                         return null;
                     }
                     // 물건이 들어있는 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
@@ -111,6 +111,7 @@ public class initClass {
                         if(db.addChange(cng)==-1){
                             System.out.println("잘못된 입력");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                            //todo 바로 홈으로 가게
                         }
                         else {
                             db.addChange(cng);
@@ -121,9 +122,7 @@ public class initClass {
             }
         } else if ("2".equals(modType)) {
             if (page != 0 && "back".equals(scannerValue)) {
-                if (page <= 0) {
-                    date = null;
-                } else if (page == 1) {
+                if (page == 1) {
                     page--;
                 } else {
                     page -= 2;
@@ -141,8 +140,15 @@ public class initClass {
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                index_long = (long) Integer.parseInt(scannerValue);
-                Event event = db.getEvent(index_long);
+                if (scannerValue.isEmpty()){
+                    System.out.println("잘못된 입력");
+                    return null;
+                    //todo 공백 예외처리 해야함
+                }
+                else {
+                    index_long = (long) Integer.parseInt(scannerValue);
+                    Event event = db.getEvent(index_long);
+                }
 
                 if(event == null){
                     System.out.println("잘못된 입력");
@@ -313,6 +319,11 @@ public class initClass {
             String input = scan.nextLine();
             tmp =input.toLowerCase();
             init.clearScreen();
+            if("".equals(tmp)){
+                System.out.println("다시입력해주세요");
+                continue;
+                //todo 공백입력시 상태 그대로
+            }
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
                 init = new initClass();
