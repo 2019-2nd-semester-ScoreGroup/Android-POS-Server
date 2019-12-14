@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class initClass {
 
@@ -111,7 +113,7 @@ public class initClass {
                         if(db.addChange(cng)==-1){
                             System.out.println("잘못된 입력");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                            //todo 바로 홈으로 가게
+
                         }
                         else {
                             db.addChange(cng);
@@ -140,37 +142,34 @@ public class initClass {
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                if (scannerValue.isEmpty()){
-                    System.out.println("잘못된 입력");
-                    return null;
-                    //todo 공백 예외처리 해야함
-                }
-                else {
                     index_long = (long) Integer.parseInt(scannerValue);
                     Event event = db.getEvent(index_long);
-                }
 
-                if(event == null){
-                    System.out.println("잘못된 입력");
-                    System.out.println("home");
-                }
-                System.out.println("결제기록입니다.");
 
-                ArrayList<Change> cngArr = event.getData();
-                for (Change tmpCng : cngArr) {
-                    System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
-                }
-                System.out.println("결제기록을 삭제하시겠습니까?(yes/no)");
+                    if (event == null) {
+                        System.out.println("잘못된 입력");
+                        System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                        return null;
+                    }
+                    System.out.println("결제기록입니다.");
 
-                page++;
+                    ArrayList<Change> cngArr = event.getData();
+                    for (Change tmpCng : cngArr) {
+                        System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
+                    }
+                    System.out.println("결제기록을 삭제하시겠습니까?(yes/no)");
+
+                    page++;
 
             } else if (page == 2) {
                 if ("yes".equals(scannerValue)) {
                     db.tryChangeEvent(index_long, (byte) 1);
                     System.out.println("결제기록이 삭제되었습니다.");
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     page = 0;
                 }
                 else if ("no".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     page = 0;
                 }
                 else {
@@ -179,10 +178,18 @@ public class initClass {
                 }
             }
         } else if ("3".equals(modType)) {
+
             if (page == 0) {
                 System.out.println("시작날짜를 입력해주세요(yyyy-mm-dd hh:mm:ss)");
                 page++;
             } else if (page == 1) {
+                Pattern p = Pattern.compile("^[0-9]{4}[-][0-9]{2}[-][0-9]{2}[ ][0-9]{2}[:][0-9]{2}[:][0-9]{2}");
+                Matcher m = p.matcher(scannerValue);
+                if(!m.find()) {
+                    System.out.println("잘못된 입력");
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    return null;
+                }
                 if (startDate == null) {
                     startDate = scannerValue;
                     System.out.println("종료날짜를 입력해주세요(yyyy-mm-dd hh:mm:ss)");
@@ -196,8 +203,8 @@ public class initClass {
                         int stockPrice = tmp.getPrice();
                         int amount = tmp.getAmount();
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
-                        System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     }
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
             }
         } else if ("4".equals(modType)) {
@@ -320,9 +327,9 @@ public class initClass {
             tmp =input.toLowerCase();
             init.clearScreen();
             if("".equals(tmp)){
-                System.out.println("다시입력해주세요");
+                System.out.println("잘못된 입력");
+                System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 continue;
-                //todo 공백입력시 상태 그대로
             }
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
@@ -333,7 +340,6 @@ public class initClass {
                 init.act(tmp);
             } else {
                 init.act(tmp);
-
             }
         } while (!"exit".equals(tmp));
         System.out.println("종료 되었습니다.");
