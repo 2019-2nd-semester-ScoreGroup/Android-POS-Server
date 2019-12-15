@@ -103,23 +103,24 @@ public class initClass {
 
                     // 직접 DB에 넣는 친구
                     Event evt = new Event((byte) 1, new Timestamp(date.getTime()), "");
-                    long 변수이름_추천 = db.addEvent(evt);
+                    long wtf = db.addEvent(evt);
 
                     for (Change tmpCng : array) {
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
+                        System.out.println(cng);
 
-                        cng.setEventKey(변수이름_추천);
+                        cng.setEventKey(wtf);
 
                         if(db.addChange(cng)==-1){
-                            System.out.println("없는 stockkey입니다.");
+                            //todo ㅋㅋ 잘못된 거 입력 하고 결제 시 잘못된 거 빼고 결제 됨
                             return null;
                         }
                         else {
-                            db.addChange(cng);
-                            System.out.println("결제완료^ㅡ^!!");
-                            //todo 시발 여기 좆됐네
+                            System.out.println(db.addChange(cng));
+                            //todo 왜 2개씩 들어가냐?
                         }
                     }
+                    System.out.println("결제완료^ㅡ^!!");
                 }
             }
         } else if ("2".equals(modType)) {
@@ -145,10 +146,11 @@ public class initClass {
                 //todo 여기서 back 혹은 숫자만 받아야함
                     index_long = (long) Integer.parseInt(scannerValue);
                     Event event = db.getEvent(index_long);
+                    //todo 공백 입력 시 터짐
 
                     if (event == null) {
-                        System.out.println("잘못된 입력");
-                        System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                        System.out.println("키를 입력해주시기 바랍니다.");
+                        //todo 이전에 지운 키를 입력하면 지운 거 나옴
                         return null;
                     }
                     System.out.println("결제기록입니다.");
@@ -173,8 +175,7 @@ public class initClass {
                     page = 0;
                 }
                 else {
-                    System.out.println("잘못된 입력");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println("yes/no를 입력해주시기 바랍니다.");
                 }
             }
         } else if ("3".equals(modType)) {
@@ -223,7 +224,7 @@ public class initClass {
                     int input_amount = Integer.parseInt(input_amount_String);
 
                     if (input_item.isEmpty()) {
-                        System.out.println("ㅈㄹㄴ");
+                        System.out.println("제대로 입력해주세요.(stockkey,amount)");
                         return null;
                     }
                     // 물건이 들어있는 hashmap 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
@@ -248,25 +249,25 @@ public class initClass {
 
                     // 직접 DB에 넣는 친구
                     Event evt = new Event((byte) 2, new Timestamp(date.getTime()), "");
-                    long 변수이름_추천 = db.addEvent(evt);
+                    long wtf = db.addEvent(evt);
 
                     for (Change tmpCng : array) {
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
 
-                        cng.setEventKey(변수이름_추천);
+                        cng.setEventKey(wtf);
 
                         if(db.addChange(cng)==-1)
                         {
-                            System.out.println("잘못된 입력");
+                            System.out.println("문제발생");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                            page=0;
+                            return null;
                         }
                         else{
                             db.addChange(cng);
-                            System.out.println("납품완료");
                             page=0;
                         }
                     }
+                    System.out.println("납품완료");
                 }
             }
         } else if ("5".equals(modType)) {
@@ -309,8 +310,8 @@ public class initClass {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
                 else {
-                    System.out.println("잘못된 입력");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println("제대로 입력해주세요.(yes/no)");
+                    return null;
                 }
                 page = 0;
             }
@@ -325,7 +326,7 @@ public class initClass {
         do {
             String input = scan.nextLine();
             tmp =input.toLowerCase();
-            init.clearScreen();
+            //init.clearScreen();
 
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
