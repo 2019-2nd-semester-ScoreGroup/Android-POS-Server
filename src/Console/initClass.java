@@ -143,13 +143,24 @@ public class initClass {
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
+                if("".equals(scannerValue))
+                {
+                    System.out.println("제대로 입력해주시기 바랍니다.(key)");
+                    return null;
+                }
+                Pattern p = Pattern.compile("^[0-9]*$");
+                Matcher m = p.matcher(scannerValue);
+                if(!m.find()) {
+                    System.out.println("제대로 입력해주시기 바랍니다.(key)");
+                    return null;
+                }
                 //todo 여기서 back 혹은 숫자만 받아야함
                     index_long = (long) Integer.parseInt(scannerValue);
                     Event event = db.getEvent(index_long);
                     //todo 공백 입력 시 터짐
 
                     if (event == null) {
-                        System.out.println("키를 입력해주시기 바랍니다.");
+                        System.out.println("제대로 입력해주시기 바랍니다.(key)");
                         //todo 이전에 지운 키를 입력하면 지운 거 나옴
                         return null;
                     }
@@ -291,6 +302,17 @@ public class initClass {
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
+                if("".equals(scannerValue))
+                {
+                    System.out.println("제대로 입력해주시기 바랍니다.(key)");
+                    return null;
+                }
+                Pattern p = Pattern.compile("^[0-9]*$");
+                Matcher m = p.matcher(scannerValue);
+                if(!m.find()) {
+                    System.out.println("제대로 입력해주시기 바랍니다.(key)");
+                    return null;
+                }
                 index_long = (long) Integer.parseInt(scannerValue);
                 Event event = db.getEvent(index_long);
                 System.out.println("해당 납품기록입니다.");
