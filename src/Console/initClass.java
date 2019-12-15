@@ -154,10 +154,8 @@ public class initClass {
                     System.out.println("제대로 입력해주시기 바랍니다.(key)");
                     return null;
                 }
-                //todo 여기서 back 혹은 숫자만 받아야함
                     index_long = (long) Integer.parseInt(scannerValue);
                     Event event = db.getEvent(index_long);
-                    //todo 공백 입력 시 터짐
 
                     if (event == null) {
                         System.out.println("제대로 입력해주시기 바랍니다.(key)");
