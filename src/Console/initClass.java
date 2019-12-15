@@ -80,7 +80,7 @@ public class initClass {
 
                     Pattern p = Pattern.compile("^[0-9]*$");
                     Matcher m = p.matcher(input_item);
-                    if(!m.find()) {
+                    if (!m.find()) {
                         System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
                         return null;
                     }
@@ -115,13 +115,12 @@ public class initClass {
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
                         cng.setEventKey(wtf);
 
-                        if(db.addChange(cng)==-1){
+                        if (db.addChange(cng) == -1) {
                             System.out.println("문제발생 결제기록 확인 후 조치 필요");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                             //todo ㅋㅋ 잘못된 거 입력 하고 결제 시 잘못된 거 빼고 결제 됨
                             return null;
-                        }
-                        else {
+                        } else {
                             db.addChange(cng);
                             //todo 왜 2개씩 들어가냐?
                         }
@@ -143,54 +142,56 @@ public class initClass {
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
                     int tmpTotalPrice = tmp.getTotalPrice();
-                    System.out.println("키 : "+tmpKey + " 총 가격 : "+tmpTotalPrice);
+                    System.out.println("키 : " + tmpKey + " 총 가격 : " + tmpTotalPrice);
                 }
 
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                if("".equals(scannerValue))
-                {
+                if ("".equals(scannerValue)) {
                     System.out.println("제대로 입력해주시기 바랍니다.(key)");
                     return null;
                 }
                 Pattern p = Pattern.compile("^[0-9]*$");
                 Matcher m = p.matcher(scannerValue);
-                if(!m.find()) {
+                if (!m.find()) {
                     System.out.println("제대로 입력해주시기 바랍니다.(key)");
                     return null;
                 }
-                    index_long = (long) Integer.parseInt(scannerValue);
-                    Event event = db.getEvent(index_long);
+                index_long = (long) Integer.parseInt(scannerValue);
+                Event event = db.getEvent(index_long);
 
-                    if (event == null) {
-                        System.out.println("제대로 입력해주시기 바랍니다.(key)");
-                        //todo 이전에 지운 키를 입력하면 지운 거 나옴
-                        return null;
-                    }
-                    System.out.println("결제기록입니다.");
+                if (event == null) {
+                    System.out.println("제대로 입력해주시기 바랍니다.(key)");
+                    //todo 이전에 지운 키를 입력하면 지운 거 나옴
+                    return null;
+                }
+                System.out.println("결제기록입니다.");
 
-                    ArrayList<Change> cngArr = event.getData();
-                    for (Change tmpCng : cngArr) {
-                        System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
-                    }
-                    System.out.println("결제기록을 삭제하시겠습니까?(yes/no)");
+                ArrayList<Change> cngArr = event.getData();
+                for (Change tmpCng : cngArr) {
+                    System.out.println("상품 코드" + tmpCng.getStockKey() + " 개수 " + tmpCng.getAmount());
+                }
+                System.out.println("결제기록을 삭제하시겠습니까?(yes/no)");
 
-                    page++;
+                page++;
 
             } else if (page == 2) {
                 if ("yes".equals(scannerValue)) {
                     db.tryChangeEvent(index_long, (byte) 1);
                     System.out.println("결제기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page = 0;
-                }
-                else if ("no".equals(scannerValue)) {
+
+                } else if ("no".equals(scannerValue)) {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                    page = 0;
-                }
-                else {
+
+                } else {
                     System.out.println("yes/no를 입력해주시기 바랍니다.");
+                }
+                page++;
+            } else if (page == 3) {
+                if (!"home".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
             }
         } else if ("3".equals(modType)) {
@@ -201,7 +202,7 @@ public class initClass {
             } else if (page == 1) {
                 Pattern p = Pattern.compile("^[0-9]{4}[-][0-9]{2}[-][0-9]{2}[ ][0-9]{2}[:][0-9]{2}[:][0-9]{2}");
                 Matcher m = p.matcher(scannerValue);
-                if(!m.find()) {
+                if (!m.find()) {
                     System.out.println("제대로 입력해주세요.(yyyy-mm-dd hh:mm:ss)");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     return null;
@@ -220,6 +221,12 @@ public class initClass {
                         int amount = tmp.getAmount();
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
                     }
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    page++;
+                }
+
+            } else if (page == 2) {
+                if (!"home".equals(scannerValue)) {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 }
             }
@@ -240,7 +247,7 @@ public class initClass {
 
                     Pattern p = Pattern.compile("^[0-9]*$");
                     Matcher m = p.matcher(input_item);
-                    if(!m.find()) {
+                    if (!m.find()) {
                         System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
                         return null;
                     }
@@ -265,8 +272,7 @@ public class initClass {
                         System.out.println("상품코드" + tmp.getStockKey());
                         System.out.println("개수" + tmp.getAmount());
                     }
-                }
-                else {
+                } else {
                     Date date = new Date();
 
                     // 직접 DB에 넣는 친구
@@ -278,15 +284,13 @@ public class initClass {
 
                         cng.setEventKey(wtf);
 
-                        if(db.addChange(cng)==-1)
-                        {
+                        if (db.addChange(cng) == -1) {
                             System.out.println("문제발생 납품기록 확인 후 조치 필요");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                             return null;
-                        }
-                        else{
+                        } else {
                             db.addChange(cng);
-                            page=0;
+                            page = 0;
                         }
                     }
                     System.out.println("납품완료");
@@ -308,19 +312,18 @@ public class initClass {
                 for (EventList tmp : eventLists) {
                     long tmpKey = tmp.getKey();
                     int tmpTotalPrice = tmp.getTotalPrice();
-                    System.out.println("키 : "+tmpKey+" 총 가격 " + tmpTotalPrice);
+                    System.out.println("키 : " + tmpKey + " 총 가격 " + tmpTotalPrice);
                 }
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
-                if("".equals(scannerValue))
-                {
+                if ("".equals(scannerValue)) {
                     System.out.println("제대로 입력해주시기 바랍니다.(key)");
                     return null;
                 }
                 Pattern p = Pattern.compile("^[0-9]*$");
                 Matcher m = p.matcher(scannerValue);
-                if(!m.find()) {
+                if (!m.find()) {
                     System.out.println("제대로 입력해주시기 바랍니다.(key)");
                     return null;
                 }
@@ -338,28 +341,31 @@ public class initClass {
                     db.tryChangeEvent(index_long, (byte) 2);
                     System.out.println("납품기록이 삭제되었습니다.");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                }
-                else if ("no".equals(scannerValue)) {
+                } else if ("no".equals(scannerValue)) {
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                }
-                else {
+                } else {
                     System.out.println("제대로 입력해주세요.(yes/no)");
                     return null;
                 }
-                page = 0;
+                page++;
+
+            } else if (page == 3) {
+                if (!"home".equals(scannerValue)) {
+                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                }
             }
         }
         return null;
     }
 
     public static void mainRun(DBManager manager, Scanner scan) {
-        db=manager;
+        db = manager;
         initClass init = new initClass();
         scan.nextLine();
         String tmp = "";
         do {
             String input = scan.nextLine();
-            tmp =input.toLowerCase();
+            tmp = input.toLowerCase();
             //init.clearScreen();
 
             // home을 입력해서 메인메뉴로 돌아가는 경우,
