@@ -355,7 +355,7 @@ public class initClass {
     public static void mainRun(DBManager manager, Scanner scan) {
         db=manager;
         initClass init = new initClass();
-
+        scan.nextLine();
         String tmp = "";
         do {
             String input = scan.nextLine();
