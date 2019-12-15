@@ -17,17 +17,8 @@ public class MainForDB {
         // for(int i=0;i<10;i++)
         {
             Random rand = new Random();
-            Scanner scanner=new Scanner(System.in);
-            String dbId,dbPw;
-            int dbPort;
-            System.out.println("DB ID");
-            dbId=scanner.nextLine();
-            System.out.println("DB PW");
-            dbPw=scanner.nextLine();
-            System.out.println("DB Port");
-            dbPort=scanner.nextInt();
 
-            DBManager dbManager = new DBManager("localhost", "androidpos", dbId,dbPw,dbPort);
+            DBManager dbManager = new DBManager("localhost", "androidpos","root","root",3306);
 
             dbManager.editStock(new Stock("1", "alpha", 100));
             dbManager.editStock(new Stock("2", "bravo", 200));

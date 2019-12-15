@@ -6,6 +6,7 @@ package Manager;
     EventList : event들로 이루어진 리스트
     stock : 재고의 키, 품명, 가격, 수량을 가지고 있는 클래스
  */
+import Console.initClass;
 import Data.Change;
 import Data.Event;
 import Data.EventList;
@@ -41,7 +42,7 @@ public class ServerController {
     private DBManager dbManager;
     private Scanner scanner;
     private static ServerController serverController;
-
+    private boolean exitTrigger=false;
     private ServerController() { }
 
     public ServerController getInstance()
@@ -79,7 +80,8 @@ public class ServerController {
 
         serverController.initialize();
 
-        serverController.run();
+        new Thread(()->serverController.run()).start();
+        initClass.mainRun(serverController.dbManager,serverController.scanner);
     }
 
     /*
@@ -89,7 +91,6 @@ public class ServerController {
         메인 스레드는 Thread.sleep문 반복하며 대기
      */
     private void run() {
-        //TODO 상훈이 코드 연결
         System.out.println("Point of Sales System");
 
         for (int i = 0; i < 30; i++)
@@ -99,18 +100,15 @@ public class ServerController {
 
         new Thread(() ->
         {
-            String s = "";
-
-            while (!s.equals("exit")) {
-                System.out.println("exit code is 'exit'\n");
-
-                s = scanner.nextLine();
-
-                if (s.equals("exit")) {
-                    System.out.println("close...");
-                    scanner.close();
-                    System.exit(0);
+            while (!exitTrigger) {
+                try {
+                    Thread.sleep(0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+            }
+            if (exitTrigger) {
+                System.exit(0);
             }
         }).start();
 

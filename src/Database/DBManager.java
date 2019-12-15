@@ -164,7 +164,6 @@ public class DBManager {
             if (!ret.next()) return -1;
             retKey = ret.getInt(1);
         } catch (SQLException e) {
-            e.printStackTrace();
             return -1;
         }
         change.setKey(retKey);
