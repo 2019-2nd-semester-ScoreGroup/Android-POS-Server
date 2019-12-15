@@ -107,16 +107,16 @@ public class initClass {
 
                     for (Change tmpCng : array) {
                         Change cng = new Change(tmpCng.getStockKey(), tmpCng.getAmount());
-                        System.out.println(cng);
-
                         cng.setEventKey(wtf);
 
                         if(db.addChange(cng)==-1){
+                            System.out.println("문제발생");
+                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                             //todo ㅋㅋ 잘못된 거 입력 하고 결제 시 잘못된 거 빼고 결제 됨
                             return null;
                         }
                         else {
-                            System.out.println(db.addChange(cng));
+                            db.addChange(cng);
                             //todo 왜 2개씩 들어가냐?
                         }
                     }
