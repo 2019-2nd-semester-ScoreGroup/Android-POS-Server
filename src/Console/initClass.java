@@ -110,7 +110,7 @@ public class initClass {
                         cng.setEventKey(wtf);
 
                         if(db.addChange(cng)==-1){
-                            System.out.println("문제발생");
+                            System.out.println("문제발생 결제기록 확인 후 조치 필요");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                             //todo ㅋㅋ 잘못된 거 입력 하고 결제 시 잘못된 거 빼고 결제 됨
                             return null;
@@ -258,7 +258,7 @@ public class initClass {
 
                         if(db.addChange(cng)==-1)
                         {
-                            System.out.println("문제발생");
+                            System.out.println("문제발생 납품기록 확인 후 조치 필요");
                             System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                             return null;
                         }
