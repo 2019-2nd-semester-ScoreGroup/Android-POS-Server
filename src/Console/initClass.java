@@ -78,6 +78,12 @@ public class initClass {
                     int input_amount = Integer.parseInt(input_amount_String);
 
 
+                    Pattern p = Pattern.compile("^[0-9]*$");
+                    Matcher m = p.matcher(input_item);
+                    if(!m.find()) {
+                        System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
+                        return null;
+                    }
                     if (input_item.isEmpty()) {
                         System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
                         return null;
@@ -232,6 +238,13 @@ public class initClass {
                     input_amount_String = input_amount_String.replaceAll("\\D", "");
                     int input_amount = Integer.parseInt(input_amount_String);
 
+                    Pattern p = Pattern.compile("^[0-9]*$");
+                    Matcher m = p.matcher(input_item);
+                    if(!m.find()) {
+                        System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
+                        return null;
+                    }
+
                     if (input_item.isEmpty()) {
                         System.out.println("제대로 입력해주세요.(stockkey,amount)");
                         return null;
@@ -359,6 +372,7 @@ public class initClass {
                 init.act(tmp);
             }
         } while (!"exit".equals(tmp));
+        init.clearScreen();
         System.out.println("종료 되었습니다.");
         scan.close();
     }
