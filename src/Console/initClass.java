@@ -79,7 +79,7 @@ public class initClass {
 
 
                     if (input_item.isEmpty()) {
-                        System.out.println("제대로 입력해주시기 바랍니다.");
+                        System.out.println("제대로 입력해주시기 바랍니다.(stockkey,amount)");
                         return null;
                     }
                     // 물건이 들어있는 배열에서 동일한 item이 있으면 index값을, 없으면 -1을 리턴합니다.
@@ -111,13 +111,13 @@ public class initClass {
                         cng.setEventKey(변수이름_추천);
 
                         if(db.addChange(cng)==-1){
-                            System.out.println("잘못된 입력");
-                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-
+                            System.out.println("없는 stockkey입니다.");
+                            return null;
                         }
                         else {
                             db.addChange(cng);
                             System.out.println("결제완료^ㅡ^!!");
+                            //todo 시발 여기 좆됐네
                         }
                     }
                 }
@@ -142,9 +142,9 @@ public class initClass {
                 System.out.println("키를 입력해주세요");
                 page++;
             } else if (page == 1) {
+                //todo 여기서 back 혹은 숫자만 받아야함
                     index_long = (long) Integer.parseInt(scannerValue);
                     Event event = db.getEvent(index_long);
-
 
                     if (event == null) {
                         System.out.println("잘못된 입력");
@@ -186,7 +186,7 @@ public class initClass {
                 Pattern p = Pattern.compile("^[0-9]{4}[-][0-9]{2}[-][0-9]{2}[ ][0-9]{2}[:][0-9]{2}[:][0-9]{2}");
                 Matcher m = p.matcher(scannerValue);
                 if(!m.find()) {
-                    System.out.println("잘못된 입력");
+                    System.out.println("제대로 입력해주세요.(yyyy-mm-dd hh:mm:ss)");
                     System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                     return null;
                 }
@@ -326,11 +326,7 @@ public class initClass {
             String input = scan.nextLine();
             tmp =input.toLowerCase();
             init.clearScreen();
-            if("".equals(tmp)){
-                System.out.println("잘못된 입력");
-                System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
-                continue;
-            }
+
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
                 init = new initClass();
