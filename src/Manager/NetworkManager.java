@@ -122,7 +122,7 @@ class ConnectionWrap implements Runnable{
     //requestParse()에서 반환된 메시지를 소켓을 통해 반환
     private void reply()
     {
-        printWriter.println(msg);
+        printWriter.println();
         printWriter.flush();
 
         System.out.println("ack " + msg);
