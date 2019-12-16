@@ -5,6 +5,7 @@ import Data.Event;
 import Data.EventList;
 import Data.Stock;
 import Database.DBManager;
+import Manager.ServerController;
 
 import java.awt.desktop.SystemEventListener;
 import java.sql.Timestamp;
@@ -358,8 +359,8 @@ public class initClass {
         return null;
     }
 
-    public static void mainRun(DBManager manager, Scanner scan) {
-        db = manager;
+    public static void mainRun(DBManager manager, Scanner scan, ServerController controller) {
+        db=manager;
         initClass init = new initClass();
         scan.nextLine();
         String tmp = "";
@@ -371,6 +372,8 @@ public class initClass {
             // home을 입력해서 메인메뉴로 돌아가는 경우,
             if ("home".equals(tmp)) {
                 init = new initClass();
+            }else if("exit".equals(tmp)){
+                controller.exitTrigger=true;
             } else if (init.modType == null) {
                 System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
                 init.init(tmp);

@@ -42,7 +42,7 @@ public class ServerController {
     private DBManager dbManager;
     private Scanner scanner;
     private static ServerController serverController;
-    private boolean exitTrigger=false;
+    public boolean exitTrigger=false;
     private ServerController() { }
 
     public ServerController getInstance()
@@ -81,7 +81,7 @@ public class ServerController {
         serverController.initialize();
 
         new Thread(()->serverController.run()).start();
-        initClass.mainRun(serverController.dbManager,serverController.scanner);
+        initClass.mainRun(serverController.dbManager,serverController.scanner,serverController);
     }
 
     /*
