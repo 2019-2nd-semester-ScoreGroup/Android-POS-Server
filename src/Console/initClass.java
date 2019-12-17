@@ -25,7 +25,7 @@ public class initClass {
     private String input, modType, startDate, endDate, date;
     private long index_long;
     private Event event;
-
+    private static final String toHomeText="메인화면으로 가시려면 \"home\"을 입력해주세요!\n나가시려면 \"exit\"을 입력해 주세요!";
     private static DBManager db;
     Timestamp tsStartDate;
     Timestamp tsEndDate;
@@ -118,7 +118,7 @@ public class initClass {
 
                         if (db.addChange(cng) == -1) {
                             System.out.println("문제발생 결제기록 확인 후 조치 필요");
-                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                            System.out.println(toHomeText);
                             //todo ㅋㅋ 잘못된 거 입력 하고 결제 시 잘못된 거 빼고 결제 됨
                             return null;
                         } else {
@@ -181,10 +181,10 @@ public class initClass {
                 if ("yes".equals(scannerValue)) {
                     db.tryChangeEvent(index_long, (byte) 1);
                     System.out.println("결제기록이 삭제되었습니다.");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
 
                 } else if ("no".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
 
                 } else {
                     System.out.println("yes/no를 입력해주시기 바랍니다.");
@@ -192,7 +192,7 @@ public class initClass {
                 page++;
             } else if (page == 3) {
                 if (!"home".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                 }
             }
         } else if ("3".equals(modType)) {
@@ -205,7 +205,7 @@ public class initClass {
                 Matcher m = p.matcher(scannerValue);
                 if (!m.find()) {
                     System.out.println("제대로 입력해주세요.(yyyy-mm-dd hh:mm:ss)");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                     return null;
                 }
                 if (startDate == null) {
@@ -222,13 +222,13 @@ public class initClass {
                         int amount = tmp.getAmount();
                         System.out.println("받아온 정보 : " + stockName + " , 가격 : " + stockPrice + " , 갯수 : " + amount);
                     }
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                     page++;
                 }
 
             } else if (page == 2) {
                 if (!"home".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                 }
             }
         } else if ("4".equals(modType)) {
@@ -287,7 +287,7 @@ public class initClass {
 
                         if (db.addChange(cng) == -1) {
                             System.out.println("문제발생 납품기록 확인 후 조치 필요");
-                            System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                            System.out.println(toHomeText);
                             return null;
                         } else {
                             db.addChange(cng);
@@ -341,9 +341,9 @@ public class initClass {
                 if ("yes".equals(scannerValue)) {
                     db.tryChangeEvent(index_long, (byte) 2);
                     System.out.println("납품기록이 삭제되었습니다.");
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                 } else if ("no".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                 } else {
                     System.out.println("제대로 입력해주세요.(yes/no)");
                     return null;
@@ -352,7 +352,7 @@ public class initClass {
 
             } else if (page == 3) {
                 if (!"home".equals(scannerValue)) {
-                    System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                    System.out.println(toHomeText);
                 }
             }
         }
@@ -375,7 +375,7 @@ public class initClass {
             }else if("exit".equals(tmp)){
                 controller.exitTrigger=true;
             } else if (init.modType == null) {
-                System.out.println("메인화면으로 가시려면 \"home\"을 입력해주세요!");
+                System.out.println(toHomeText);
                 init.init(tmp);
                 init.act(tmp);
             } else {
