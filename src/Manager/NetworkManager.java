@@ -1,8 +1,12 @@
 package Manager;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.*;
 
 /*
 클라이언트와 연결될 때마다 새로운 쓰레드로 소켓을 생성함
@@ -23,14 +27,15 @@ public class NetworkManager {
     public void Run() {
         try
         {
+            
             //서버 생성
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            SSLServerSocket serverSocket = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(PORT);
 
             //서버가 종료되기 전
             while(true)
             {
                 //클라이언트 연결 소켓 생성
-                Socket socket = serverSocket.accept();
+                SSLSocket socket =  (SSLSocket)serverSocket.accept();
                 socket.setSoTimeout(5000);
 
                 //스레드를 새로 생성하여 래핑한 소켓 생성
@@ -48,13 +53,13 @@ public class NetworkManager {
 
 class ConnectionWrap implements Runnable{
 
-    private Socket socket = null;
+    private SSLSocket socket = null;
     private ServerController serverController;
     private String msg = null;
     private BufferedReader inputBuffer;
     private PrintWriter printWriter;
 
-    public ConnectionWrap(Socket socket, ServerController serverController)
+    public ConnectionWrap(SSLSocket socket, ServerController serverController)
     {
         this.serverController = serverController;
         this.socket = socket;
