@@ -16,6 +16,8 @@ import java.security.*;
 public class NetworkManager {
     //포트 번호, 자신, 종료값 입력을 위한 스캐너
     private static final int PORT = 12142;
+    private static final String key_path = "./key/server.jks";
+    private static final String key_password= "12142";
     private ServerController serverController;
 
     NetworkManager(ServerController serverController)
@@ -27,7 +29,9 @@ public class NetworkManager {
     public void Run() {
         try
         {
-            
+            System.setProperty("javax.net.ssl.keyStore", key_path);
+            System.setProperty("javax.net.ssl.keyStorePassword", key_password);
+            System.setProperty("javax.net.debug", "ssl");
             //서버 생성
             SSLServerSocket serverSocket = (SSLServerSocket) SSLServerSocketFactory.getDefault().createServerSocket(PORT);
 
@@ -36,7 +40,8 @@ public class NetworkManager {
             {
                 //클라이언트 연결 소켓 생성
                 SSLSocket socket =  (SSLSocket)serverSocket.accept();
-                socket.setSoTimeout(5000);
+                socket.setUseClientMode(false);
+                socket.setSoTimeout(15000);
 
                 //스레드를 새로 생성하여 래핑한 소켓 생성
                 new Thread(()->{
@@ -113,6 +118,7 @@ class ConnectionWrap implements Runnable{
     //소켓으로 들어온 메시지를 라인 단위로 읽음
     private void getMsg() throws IOException
     {
+
         msg = inputBuffer.readLine();
 
         System.out.println("query " + msg);
